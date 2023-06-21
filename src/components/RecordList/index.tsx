@@ -11,10 +11,10 @@ import {
 } from 'react-native';
 import {RecordItem} from "../RecordItem";
 import {useSelector} from "react-redux";
-import {initialStateType, RecordState} from "../../store/slices/recordSlice";
 import ScrollView = Animated.ScrollView;
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {initialStateType, RecordState} from "../../store/slices/recordSlice/types";
 
 export const RecordList = () => {
 
@@ -49,7 +49,7 @@ export const RecordList = () => {
           </View>
           <ScrollView>
               <Button title={'add record'}
-                onPress={() => navigate('Add Record')}
+                onPress={() => navigate('Create new post')}
               />
           </ScrollView>
         </SafeAreaView>
@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "flex-end",
         height: '100%',
-        //marginTop: StatusBar.currentHeight || 0,
     },
     item: {
         backgroundColor: '#f9c2ff',

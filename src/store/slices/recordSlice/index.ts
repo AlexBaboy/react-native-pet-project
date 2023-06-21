@@ -1,18 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
-
-export type RecordState = {
-  id: number,
-  title: string,
-  description: string,
-  published: boolean,
-  img: string,
-  createdAt: string
-};
-
-export type initialStateType = {
-  records: RecordState[]
-}
+import {initialStateType, RecordState} from "./types";
 
 const initialState: initialStateType = {
   records: [],

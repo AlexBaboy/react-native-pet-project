@@ -9,7 +9,7 @@ export const Routes = [
     },
     {
         id: 2,
-        name: 'Add Record',
+        name: 'Create new post',
         component: AddRecord
     }
 ]
