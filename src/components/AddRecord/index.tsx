@@ -8,12 +8,14 @@ import {
     TextInput,
     TouchableOpacity,
     View,
-    TextInputProps, Pressable, Modal, Alert,
+    TextInputProps, Pressable, Modal, Alert, Image,
 } from 'react-native';
 import {Published, RecordState} from "../../store/slices/recordSlice/types";
 import {sharedColors} from "../../shared/styles/colors";
 import {fontSizes} from "../../shared/styles/fonstSizes";
 import {PlusIcon} from "../../shared/components/PlusIcon";
+import {CancelIcon} from "../../shared/components/CancelIcon";
+import ImagePicker from 'react-native-image-crop-picker';
 
 interface ExtendedInputProps extends TextInputProps {
     name: keyof RecordState;
@@ -23,6 +25,8 @@ const ExtendedTextInput: React.FC<ExtendedInputProps> = (props) => {
     return <TextInput {...props} />;
 };
 
+
+
 export const AddRecord = () => {
 
     const [state, setState] = useState({
@@ -30,6 +34,8 @@ export const AddRecord = () => {
         description: '',
         published: ''
     })
+
+    const [uri, setUri] = React.useState(undefined);
 
     const publishedValues = Object.values(Published);
 
@@ -45,6 +51,32 @@ export const AddRecord = () => {
     const addRecord = () => {
         console.log('13 add record clicked!!!')
         console.log('13 publishedValues', publishedValues)
+    }
+
+    const pickPicture = () => {
+
+        ImagePicker.openPicker({
+            width: 300,
+            height: 400,
+            cropping: true,
+            mediaType: 'photo',
+        }).then(image => {
+            // @ts-ignore
+            setUri(image.path);
+            //props.onChange?.(image);
+        }).catch(error => {
+            if (error.code === 'E_PICKER_CANCELLED') {
+                // Обработка случая, когда выбор изображения был отменен пользователем
+                console.log('Выбор изображения отменен');
+            } else {
+                // Обработка других ошибок
+                console.log('Ошибка при выборе изображения:', error);
+            }
+        });
+    };
+
+    const removePicture = () => {
+        setUri(undefined)
     }
 
     return (
@@ -85,10 +117,26 @@ export const AddRecord = () => {
                     <Text style={styles.photoBlockTitle}>Photo</Text>
                 </View>
                 <View style={styles.plusBlockContainer}>
-                    <TouchableOpacity style={styles.plusBlock} >
-                        <PlusIcon />
+                    <TouchableOpacity style={styles.plusBlock} onPress={pickPicture}>
+
+                        {uri ? (
+                            <View style={styles.imagesContainer}>
+                                <TouchableOpacity style={styles.removePictureBlock} onPress={removePicture}>
+                                    <CancelIcon/>
+                                </TouchableOpacity>
+                                <Image
+                                    style={styles.recordImage}
+                                    source={{ uri }}
+                                />
+                            </View>
+                        ) :
+                            <PlusIcon />
+                        }
+
                     </TouchableOpacity>
                 </View>
+
+
             </View>
 
             <View style={styles.centeredView}>
@@ -217,7 +265,7 @@ const styles = StyleSheet.create({
     },
     plusBlockContainer: {
         marginVertical: fontSizes['1rem'],
-        padding: 0
+        padding: 0,
     },
     plusBlock: {
         margin: 0,
@@ -226,6 +274,23 @@ const styles = StyleSheet.create({
         height: 100,
         backgroundColor: sharedColors.bgGray,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+    },
+    imagesContainer: {
+        flex: 1,
+        position: "relative",
+        borderRadius: 4
+    },
+    removePictureBlock: {
+      position: 'absolute',
+      right: 40,
+      top: 0,
+      width: 10,
+      height: 20,
+      zIndex: 5
+    },
+    recordImage: {
+        width: 100,
+        height: 100
     }
 })
