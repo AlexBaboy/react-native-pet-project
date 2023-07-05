@@ -8,14 +8,15 @@ import {
     TextInput,
     TouchableOpacity,
     View,
-    TextInputProps, Pressable, Modal, Alert, Image,
+    TextInputProps, Pressable, Alert, Image,
 } from 'react-native';
-import {Published, RecordState} from "../../store/slices/recordSlice/types";
+import {RecordState} from "../../store/slices/recordSlice/types";
 import {sharedColors} from "../../shared/styles/colors";
 import {fontSizes} from "../../shared/styles/fonstSizes";
 import {PlusIcon} from "../../shared/components/PlusIcon";
 import {CancelIcon} from "../../shared/components/CancelIcon";
 import ImagePicker from 'react-native-image-crop-picker';
+import ModalComponent from "../../shared/components/ModalComponent";
 
 interface ExtendedInputProps extends TextInputProps {
     name: keyof RecordState;
@@ -24,7 +25,6 @@ interface ExtendedInputProps extends TextInputProps {
 const ExtendedTextInput: React.FC<ExtendedInputProps> = (props) => {
     return <TextInput {...props} />;
 };
-
 
 
 export const AddRecord = () => {
@@ -37,7 +37,7 @@ export const AddRecord = () => {
 
     const [uri, setUri] = React.useState(undefined);
 
-    const publishedValues = Object.values(Published);
+
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -50,7 +50,6 @@ export const AddRecord = () => {
 
     const addRecord = () => {
         console.log('13 add record clicked!!!')
-        console.log('13 publishedValues', publishedValues)
     }
 
     const pickPicture = () => {
@@ -68,9 +67,11 @@ export const AddRecord = () => {
             if (error.code === 'E_PICKER_CANCELLED') {
                 // Обработка случая, когда выбор изображения был отменен пользователем
                 console.log('Выбор изображения отменен');
+                Alert.alert('Выбор изображения отмене');
             } else {
                 // Обработка других ошибок
                 console.log('Ошибка при выборе изображения:', error);
+                Alert.alert('Ошибка при выборе изображения:', error);
             }
         });
     };
@@ -122,7 +123,11 @@ export const AddRecord = () => {
                         {uri ? (
                             <View style={styles.imagesContainer}>
                                 <TouchableOpacity style={styles.removePictureBlock} onPress={removePicture}>
-                                    <CancelIcon/>
+                                    <CancelIcon
+                                        width={'24'}
+                                        height={'24'}
+                                        fill={sharedColors.white}
+                                    />
                                 </TouchableOpacity>
                                 <Image
                                     style={styles.recordImage}
@@ -136,45 +141,15 @@ export const AddRecord = () => {
                     </TouchableOpacity>
                 </View>
 
+                {modalVisible && <ModalComponent
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    handleChange={handleChange}
+                />}
 
             </View>
 
-            <View style={styles.centeredView}>
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={() => {
-                        Alert.alert('Modal has been closed.');
-                        setModalVisible(!modalVisible);
-                    }}>
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
 
-                            {publishedValues.map((value, index) => (
-                                <TouchableOpacity
-                                    key={index}
-                                    style={styles.option}
-                                    onPress={() => {
-                                        // Обработка выбора значения
-                                        console.log(value);
-                                        handleChange('published', value)
-                                        setModalVisible(false);
-                                    }}
-                                >
-                                    <Text style={styles.optionText}>{value}</Text>
-                                </TouchableOpacity>
-                            ))}
-
-                            <Pressable
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => setModalVisible(!modalVisible)}>
-                                <Text style={styles.textStyle}>Hide Modal</Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                </Modal>
-            </View>
 
             <ScrollView>
                 <Button title={'Add record'} onPress={addRecord}/>
@@ -205,54 +180,9 @@ const styles = StyleSheet.create({
     title: {
         fontSize: fontSizes['1rem'] * 2,
     },
-
-    centeredView: {
-        flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-    },
-    modalView: {
-        backgroundColor: sharedColors.white,
-        borderTopLeftRadius: fontSizes['1rem'],
-        borderTopRightRadius: fontSizes['1rem'],
-        padding: fontSizes['1rem'] * 2,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-        width: '100%',
-        height: '50%'
-    },
-    button: {
-        borderRadius: fontSizes['1rem'],
-        padding: 10,
-        elevation: 2,
-    },
-    buttonOpen: {
-        backgroundColor: '#F194FF',
-    },
-    buttonClose: {
-        backgroundColor: '#2196F3',
-    },
-    textStyle: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
     modalText: {
         marginBottom: fontSizes['1rem'],
         textAlign: 'center',
-    },
-    option: {
-
-    },
-    optionText: {
-
     },
     photoBlock: {
         marginTop: fontSizes['1rem'],
@@ -283,11 +213,12 @@ const styles = StyleSheet.create({
     },
     removePictureBlock: {
       position: 'absolute',
-      right: 40,
+      right: 20,
       top: 0,
-      width: 10,
-      height: 20,
-      zIndex: 5
+      width: 5,
+      height: 5,
+      zIndex: 5,
+      border: 2,
     },
     recordImage: {
         width: 100,
