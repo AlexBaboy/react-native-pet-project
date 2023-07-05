@@ -8,6 +8,7 @@ export type RecordState = {
     title: string,
     description: string,
     published: Published,
+    photoUrl: string,
     img: string,
     createdAt: string
 };

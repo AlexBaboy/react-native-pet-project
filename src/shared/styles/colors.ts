@@ -3,5 +3,6 @@ export const sharedColors = {
     black: '#000000',
     white: '#FFFFFF',
     modalOverlayBackground: 'rgba(169, 169, 169, .5)',
-    blue: '#0000FF'
+    blue: '#0000FF',
+    red: '#DC143C'
 }
