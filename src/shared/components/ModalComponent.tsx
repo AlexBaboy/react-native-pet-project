@@ -1,13 +1,15 @@
 import React, {memo} from 'react';
 import {Alert, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {Published, RecordState} from "../../store/slices/recordSlice/types";
+import {Published} from "../../store/slices/recordSlice/types";
 import {sharedColors} from "../styles/colors";
 import {fontSizes} from "../styles/fonstSizes";
+import {CheckedIcon} from "./CheckedlIcon";
 
 type ModalComponentProps = {
     modalVisible: boolean
     setModalVisible: (visible: boolean) => void,
-    handleChange: (name: keyof RecordState, value: string) => void,
+    onChangePublished: (value: string) => void,
+    checkedValue: string
 }
 
 const publishedValues = Object.values(Published);
@@ -16,12 +18,14 @@ const ModalComponent = (props: ModalComponentProps) => {
 
     const {
         setModalVisible,
-        handleChange,
-        modalVisible
+        modalVisible,
+        onChangePublished,
+        checkedValue
     } = props
 
     return (
         <View style={styles.centeredView}>
+
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -33,26 +37,40 @@ const ModalComponent = (props: ModalComponentProps) => {
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
 
-                        {publishedValues.map((value, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={styles.option}
-                                onPress={() => {
-                                    // Обработка выбора значения
-                                    console.log(value);
-                                    handleChange('published', value)
-                                    setModalVisible(!modalVisible);
-                                }}
-                            >
-                                <Text style={styles.optionText}>{value}</Text>
-                            </TouchableOpacity>
-                        ))}
+                        <View style={styles.optionsBlock}>
+                            {publishedValues.map((value, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    style={styles.option}
+                                    onPress={() => {
+                                        // Обработка выбора значения
+                                        onChangePublished(value)
+                                        setModalVisible(!modalVisible);
+                                    }}
+                                >
+                                    <View style={styles.optionContainer}>
+                                        <Text style={styles.optionText}>{value}</Text>
+                                        {checkedValue === value && (
+                                            <View  style={styles.optionCheckedSvg} >
+                                                <CheckedIcon
+                                                    fill={sharedColors.modalOverlayBackground}
+                                                    width={'24'}
+                                                    height={'24'}
+                                                />
+                                            </View>
+                                        )}
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
 
-                        <Pressable
-                            style={[styles.button, styles.buttonClose]}
-                            onPress={() => setModalVisible(!modalVisible)}>
-                            <Text style={styles.textStyle}>Hide Modal</Text>
-                        </Pressable>
+                        <View  style={styles.buttonBlock}>
+                            <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => setModalVisible(!modalVisible)}>
+                                <Text style={styles.buttonCloseText}>CLOSE</Text>
+                            </Pressable>
+                        </View>
                     </View>
                 </View>
             </Modal>
@@ -70,8 +88,9 @@ const styles = StyleSheet.create({
         backgroundColor: sharedColors.white,
         borderTopLeftRadius: fontSizes['1rem'],
         borderTopRightRadius: fontSizes['1rem'],
-        padding: fontSizes['1rem'] * 2,
+        padding: fontSizes['1rem'],
         alignItems: 'center',
+        justifyContent: 'space-between',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -81,30 +100,48 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         width: '100%',
-        height: '50%'
+        height: '50%',
+    },
+    optionsBlock: {
+        width: '100%'
+    },
+    buttonBlock: {
+        width: '100%'
+    },
+    optionContainer: {
+        margin: 0,
+        padding: 0,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     option: {
-
+        marginTop: 8,
+        width: '100%',
+        borderBottomWidth: 1,
+        borderBottomColor: sharedColors.bgGray
     },
     optionText: {
 
     },
+    optionCheckedSvg: {
+
+    },
     button: {
-        borderRadius: fontSizes['1rem'],
+        borderRadius: 4,
         padding: 10,
-        elevation: 2,
+        width: '100%'
     },
     buttonOpen: {
-        backgroundColor: '#F194FF',
+        backgroundColor: sharedColors.blue,
     },
     buttonClose: {
-        backgroundColor: '#2196F3',
+        backgroundColor: sharedColors.blue,
     },
-    textStyle: {
-        color: 'white',
+    buttonCloseText: {
+        color: sharedColors.white,
         fontWeight: 'bold',
         textAlign: 'center',
-    },
+    }
 })
 
 export default memo(ModalComponent);

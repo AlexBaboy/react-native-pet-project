@@ -1,23 +1,46 @@
 import React from 'react';
-import {Image, StyleSheet, TouchableOpacity, View} from "react-native";
+import {Alert, Image, StyleSheet, TouchableOpacity, View} from "react-native";
 import {CancelIcon} from "../../shared/components/CancelIcon";
 import {sharedColors} from "../../shared/styles/colors";
 import {PlusIcon} from "../../shared/components/PlusIcon";
 import {fontSizes} from "../../shared/styles/fonstSizes";
+import ImagePicker from "react-native-image-crop-picker";
 
 type ImageCropComponentProps = {
-    pickPicture: () => void
-    removePicture: () => void
+    pickPictureHandler: (url: string) => void
+    removePictureHandler: () => void
     photoUrl: string
 }
 
 const ImageCropComponent = (props: ImageCropComponentProps) => {
 
     const {
-        pickPicture,
-        removePicture,
+        pickPictureHandler,
+        removePictureHandler,
         photoUrl
     } = props
+
+    const pickPicture = () => {
+
+        ImagePicker.openPicker({
+            width: 300,
+            height: 400,
+            cropping: true,
+            mediaType: 'photo',
+        }).then(image => {
+            pickPictureHandler(image.path);
+        }).catch(error => {
+            if (error.code === 'E_PICKER_CANCELLED') {
+                // Обработка случая, когда выбор изображения был отменен пользователем
+                console.log('Выбор изображения отменен');
+                Alert.alert('Выбор изображения отмене');
+            } else {
+                // Обработка других ошибок
+                console.log('Ошибка при выборе изображения:', error);
+                Alert.alert(`Ошибка при выборе изображения:, ${error}`);
+            }
+        });
+    };
 
     return (
         <View style={styles.plusBlockContainer}>
@@ -25,7 +48,7 @@ const ImageCropComponent = (props: ImageCropComponentProps) => {
 
                 {photoUrl ? (
                     <View style={styles.imagesContainer}>
-                        <TouchableOpacity style={styles.removePictureBlock} onPress={removePicture}>
+                        <TouchableOpacity style={styles.removePictureBlock} onPress={removePictureHandler}>
                             <CancelIcon
                                 width={'24'}
                                 height={'24'}

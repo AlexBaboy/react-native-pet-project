@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
     ScrollView,
     Text,
@@ -7,71 +7,50 @@ import {
     StyleSheet,
     TextInput,
     View,
-    TextInputProps, Pressable, Alert,
+    TextInputProps, Pressable,
 } from 'react-native';
-import {RecordState} from "../../store/slices/recordSlice/types";
+import {Published, RecordState} from "../../store/slices/recordSlice/types";
 import {sharedColors} from "../../shared/styles/colors";
 import {fontSizes} from "../../shared/styles/fonstSizes";
-import ImagePicker from 'react-native-image-crop-picker';
 import ModalComponent from "../../shared/components/ModalComponent";
 import ImageCropComponent from "../ImageCropComponent";
-import { useForm, Controller } from "react-hook-form"
-import {messagesEnum} from "../../constants/messages";
+import {useForm, Controller} from "react-hook-form"
+import * as yup from 'yup';
+import {yupResolver} from "@hookform/resolvers/yup";
+import type {RecordFormData } from './types'
 
 interface ExtendedInputProps extends TextInputProps {
     name: keyof RecordState;
 }
 
-type FormData = {
-    title: string;
-    description: string;
-    published: string;
-    photoUrl: string
-};
-
 const ExtendedTextInput: React.FC<ExtendedInputProps> = (props) => {
     return <TextInput {...props} />;
 };
 
+const schema = yup.object().shape({
+    title: yup.string().required('Title is required'),
+    description: yup.string().required('Description is required'),
+    //photoUrl: yup.string().required('Photo is required'),
+});
+
 export const AddRecord = () => {
 
-    const [photoUrl, setPhotoUrl] = React.useState('');
+    const [photoUrl, setPhotoUrl] = useState<string>('');
+    const [published, setPublished] = useState<string>(Published.Published);
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
 
-    const [modalVisible, setModalVisible] = useState(false);
+    const [formSubmitted, setFormSubmitted] = useState(false)
 
-    /*const handleChange = async (name: keyof RecordState, value: string) => {
+    const onChangePublished = (value: string) => {
+        setPublished(value)
+    }
 
-        //await trigger([name as keyof FormData]).then(r => r); // Вызываем валидацию для поля при его изменении
+    const pickPictureHandler = (url: string) => {
+        console.log('49 url', url)
+        setPhotoUrl(url)
+    }
 
-        setState(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };*/
-
-    const pickPicture = () => {
-
-        ImagePicker.openPicker({
-            width: 300,
-            height: 400,
-            cropping: true,
-            mediaType: 'photo',
-        }).then(image => {
-            setPhotoUrl(image.path);
-        }).catch(error => {
-            if (error.code === 'E_PICKER_CANCELLED') {
-                // Обработка случая, когда выбор изображения был отменен пользователем
-                console.log('Выбор изображения отменен');
-                Alert.alert('Выбор изображения отмене');
-            } else {
-                // Обработка других ошибок
-                console.log('Ошибка при выборе изображения:', error);
-                Alert.alert(`Ошибка при выборе изображения:, ${error}`);
-            }
-        });
-    };
-
-    const removePicture = () => {
+    const removePictureHandler = () => {
         setPhotoUrl('')
     }
 
@@ -80,26 +59,39 @@ export const AddRecord = () => {
         handleSubmit,
         formState: { errors },
         setValue,
-    } = useForm<FormData> ({
+    } = useForm<RecordFormData > ({
         defaultValues: {
             title: '',
-            published: 'Published',
+            published: published,
             description: '',
-            photoUrl: ''
+            photoUrl: photoUrl
         },
+        resolver: yupResolver(schema),
     })
 
-    useEffect(() => {
-        if (photoUrl) {
-            console.log('102 photoUrl', photoUrl)
-            errors.photoUrl = undefined
-        }
-    }, [photoUrl])
+    const onSubmit = (data: RecordFormData ) => {
 
-    const onSubmit = (data: FormData) => {
-        console.log('91 onSubmit!!!')
-        console.log(data)
+        setFormSubmitted(true)
+
+        // все непустые поля из формы
+        const nonEmptyFields: Record<string, string> = {};
+        for (const key in data) {
+            if (data[key as keyof RecordFormData]) {
+                nonEmptyFields[key] = data[key as keyof RecordFormData] as string;
+            }
+        }
+
+        // объединяем с photoUrl и published
+        const recordToSave = {
+            ...nonEmptyFields,
+            published,
+            photoUrl
+        }
+
+        console.log('91 recordToSave', recordToSave)
     }
+
+    const isSubmitDisabled = Object.keys(errors).length > 0 || !photoUrl;
 
     return (
         <SafeAreaView style={styles.container}>
@@ -107,12 +99,9 @@ export const AddRecord = () => {
 
             <View>
 
+                {/* title */}
                 <Controller
                     control={control}
-                    rules={{
-                        required: true,
-                    }}
-
                     render={({ field }) => (
                         <ExtendedTextInput
                             placeholder={'Title'}
@@ -126,25 +115,30 @@ export const AddRecord = () => {
                     )}
                     name="title"
                 />
-                {errors.title && <Text style={styles.error}>{messagesEnum.requiredField}</Text>}
+                {errors.title?.message && <Text style={styles.error}>{errors.title?.message}</Text>}
 
-                <Pressable
-                    onPress={() => setModalVisible(true)}
-                >
-                    <ExtendedTextInput
-                        placeholder={'Published'}
-                        value={state.published}
-                        name="published"
-                        editable={false}
-                        style={styles.inputForm}
-                    />
-                </Pressable>
-
+                {/* Published */}
                 <Controller
                     control={control}
-                    rules={{
-                        required: true,
-                    }}
+                    render={({ field }) => (
+                        <Pressable
+                            onPress={() => setModalVisible(true)}
+                        >
+                            <ExtendedTextInput
+                                placeholder={'Published'}
+                                name="published"
+                                editable={false}
+                                style={styles.inputForm}
+                                value={published}
+                            />
+                        </Pressable>
+                    )}
+                    name="published"
+                />
+
+                {/* Description */}
+                <Controller
+                    control={control}
                     render={({ field }) => (
                         <ExtendedTextInput
                             placeholder={'Description'}
@@ -160,8 +154,7 @@ export const AddRecord = () => {
                     )}
                     name="description"
                 />
-                {errors.description && <Text  style={styles.error}>{messagesEnum.requiredField}</Text>}
-
+                {errors.description?.message && <Text  style={styles.error}>{errors.description?.message}</Text>}
             </View>
 
             <View style={styles.photoBlock}>
@@ -169,32 +162,28 @@ export const AddRecord = () => {
                     <Text style={styles.photoBlockTitle}>Photo</Text>
                 </View>
 
-                <Controller
-                    control={control}
-                    rules={{
-                        required: true,
-                    }}
-                    render={({  }) => (
-                        <ImageCropComponent
-                            photoUrl={photoUrl}
-                            pickPicture={pickPicture}
-                            removePicture={removePicture}
-                        />
-                    )}
-                    name="photoUrl"
+                {/* Photo */}
+                <ImageCropComponent
+                    photoUrl={photoUrl}
+                    pickPictureHandler={pickPictureHandler}
+                    removePictureHandler={removePictureHandler}
                 />
-                {errors.photoUrl && <Text  style={styles.error}>{messagesEnum.requiredField}</Text>}
+                {formSubmitted && !photoUrl && <Text  style={styles.error}>{'Photo is required'}</Text>}
 
                 {modalVisible && <ModalComponent
                     modalVisible={modalVisible}
                     setModalVisible={setModalVisible}
-                    handleChange={handleChange}
+                    onChangePublished={onChangePublished}
+                    checkedValue={published}
                 />}
-
             </View>
 
             <ScrollView>
-                <Button title={'Add record'} onPress={handleSubmit(onSubmit)} />
+                <Button
+                    title={'Add record'}
+                    onPress={handleSubmit(onSubmit)}
+                    disabled={isSubmitDisabled}
+                />
             </ScrollView>
 
             </ScrollView>
