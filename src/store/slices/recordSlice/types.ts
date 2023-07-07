@@ -4,13 +4,12 @@ export enum Published {
 }
 
 export type RecordState = {
-    id: number,
+    id?: number,
     title: string,
     description: string,
-    published: Published,
+    published: string,
     photoUrl: string,
-    img: string,
-    createdAt: string
+    createdAt?: string
 };
 
 export type initialStateType = {

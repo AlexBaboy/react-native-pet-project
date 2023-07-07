@@ -18,6 +18,10 @@ import {useForm, Controller} from "react-hook-form"
 import * as yup from 'yup';
 import {yupResolver} from "@hookform/resolvers/yup";
 import type {RecordFormData } from './types'
+import {useAppDispatch} from "../../store/hooks/useAppDispatch";
+import {add} from "../../store/slices/recordSlice";
+import {useNavigation} from "@react-navigation/native";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
 interface ExtendedInputProps extends TextInputProps {
     name: keyof RecordState;
@@ -35,11 +39,14 @@ const schema = yup.object().shape({
 
 export const AddRecord = () => {
 
+    const {navigate} = useNavigation<NativeStackNavigationProp<any>>();
     const [photoUrl, setPhotoUrl] = useState<string>('');
     const [published, setPublished] = useState<string>(Published.Published);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
 
     const [formSubmitted, setFormSubmitted] = useState(false)
+
+    const dispatch = useAppDispatch()
 
     const onChangePublished = (value: string) => {
         setPublished(value)
@@ -89,6 +96,10 @@ export const AddRecord = () => {
         }
 
         console.log('91 recordToSave', recordToSave)
+
+        dispatch(add(recordToSave as RecordState));
+
+        navigate('Record List')
     }
 
     const isSubmitDisabled = Object.keys(errors).length > 0 || !photoUrl;
