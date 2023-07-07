@@ -21,12 +21,9 @@ export const recordSlice = createSlice({
         photoUrl: payload.photoUrl
       }
       state.records.push(recordItem);
-
-      console.log('25 recordItem', recordItem)
-
     },
     remove: (state, {payload}: PayloadAction<number>) => {
-      state.records.filter(record => record.id !== payload);
+      state.records = state.records.filter(record => record.id !== payload);
     },
     clearAll: state => {
       state.records = []

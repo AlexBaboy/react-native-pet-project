@@ -14,7 +14,7 @@ type ModalComponentProps = {
 
 const publishedValues = Object.values(Published);
 
-const ModalComponent = (props: ModalComponentProps) => {
+const ModalPublishedComponent = (props: ModalComponentProps) => {
 
     const {
         setModalVisible,
@@ -144,4 +144,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default memo(ModalComponent);
+export default memo(ModalPublishedComponent);

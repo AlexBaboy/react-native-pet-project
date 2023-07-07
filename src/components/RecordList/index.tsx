@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useState} from 'react';
 import {
     FlatList,
     SafeAreaView,
@@ -6,7 +6,7 @@ import {
     StyleSheet,
     ListRenderItemInfo,
     View,
-    Button
+    Button, TouchableOpacity
 } from 'react-native';
 import {RecordItem} from "../RecordItem";
 import {useSelector} from "react-redux";
@@ -14,28 +14,23 @@ import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {initialStateType, RecordState} from "../../store/slices/recordSlice/types";
 import {fontSizes} from "../../shared/styles/fonstSizes";
+import {sharedColors} from "../../shared/styles/colors";
+import {DeleteIcon} from "../../shared/components/DeleteIcon";
+import ModalDeleteComponent from "../../shared/components/ModalDeleteComponent";
+import {useAppDispatch} from "../../store/hooks/useAppDispatch";
+import {add, clearAll} from "../../store/slices/recordSlice";
 
-const mockedRecords = [
-    {"createdAt": "07.07.2023, 11:33:53", "description": "hfhjkpppp", "id": 1688718833545, "photoUrl": "file:///storage/emulated/0/Android/data/com.petproject/files/Pictures/fa4c0948-cef5-4e61-bf61-28a4d34cc633.jpg", "published": "Published", "title": "hghh"},
-    {"createdAt": "07.07.2023, 11:39:03", "description": "ppoi", "id": 1688719143701, "photoUrl": "file:///storage/emulated/0/Android/data/com.petproject/files/Pictures/4cfef6ea-0597-43e4-a1ce-0b5561f65ab1.jpg", "published": "Published", "title": "wdgg"},
-    {"createdAt": "07.07.2023, 11:40:33", "description": "ppoii", "id": 1688719233929, "photoUrl": "file:///storage/emulated/0/Android/data/com.petproject/files/Pictures/2fe3fb2d-82c6-43de-a8f5-68dbd3b4c548.jpg", "published": "Published", "title": "qwee"}
-]
 
-
-    export const RecordList = () => {
+export const RecordList = () => {
 
     const recordList = useSelector((state: initialStateType) => state.records)
     const {navigate} = useNavigation<NativeStackNavigationProp<any>>();
 
-    useEffect(() => {
-        //setUpdatedRecordList(recordList);
-        console.log('28 recordList', recordList)
-        console.log('28 recordList?.records', recordList?.records)
-    }, [recordList]);
+    const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
 
-    const renderItem = ({item}: ListRenderItemInfo<RecordState>): any => {
+    const dispatch = useAppDispatch()
 
-        console.log('41 item', item)
+    const renderItem = ({item}: ListRenderItemInfo<RecordState>): React.JSX.Element => {
 
         return (
             <RecordItem
@@ -49,24 +44,57 @@ const mockedRecords = [
         )
     }
 
+    const showRemoveAllModal = () => {
+        setDeleteModalVisible(true)
+    }
+
+    const removeAll = () => {
+        dispatch(clearAll());
+        setDeleteModalVisible(false)
+    }
+
+    const cancelRemoveAll = () => {
+        setDeleteModalVisible(false)
+    }
+
     return (
         <SafeAreaView style={styles.container}>
               <View>
                   {!recordList?.records.length ? (
                       <Text>Record list is Empty</Text>
                   ):
-                      <FlatList
-                          data={recordList?.records}
-                          renderItem={renderItem}
-                          keyExtractor={(item) => item.id.toString()}
-                      />
+                      <View>
+                          <View style={styles.deleteBlock}>
+                              <TouchableOpacity onPress={showRemoveAllModal}>
+                                <DeleteIcon
+                                    width={'24'}
+                                    height={'24'}
+                                />
+                              </TouchableOpacity>
+                          </View>
+                          <FlatList
+                              data={recordList?.records}
+                              renderItem={renderItem}
+                              keyExtractor={(item) => item.id.toString()}
+                          />
+                      </View>
                   }
               </View>
-              <View>
+              <View style={styles.bottomButton}>
                   <Button title={'add record'}
                     onPress={() => navigate('Create new post')}
                   />
               </View>
+
+            {isDeleteModalVisible && (
+                <ModalDeleteComponent
+                    text={'Do you want to remove all records?'}
+                    confirmCallback={removeAll}
+                    cancelCallback={cancelRemoveAll}
+                    setModalVisible={setDeleteModalVisible}
+                />
+            )}
+
         </SafeAreaView>
   );
 };
@@ -78,14 +106,20 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         height: '100%',
         padding: fontSizes['1rem'],
+        backgroundColor: sharedColors.bgGray,
+        position: "relative",
     },
-    item: {
-        backgroundColor: '#f9c2ff',
-        padding: 20,
-        marginVertical: 8,
-        marginHorizontal: 16,
+    deleteBlock: {
+        width: '100%',
+        alignItems: 'flex-end',
+        marginBottom: 20
     },
-    title: {
-        fontSize: 32,
+    bottomButton: {
+        position: 'absolute',
+        bottom: 0,
+        left: fontSizes['1rem'],
+        width: '100%',
+        zIndex: 5
     }
+
 })

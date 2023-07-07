@@ -1,8 +1,12 @@
-import React, {memo} from 'react';
-import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {RecordState} from "../../store/slices/recordSlice/types";
+import React, {memo, useState} from 'react';
+import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ViewStyle} from 'react-native';
+import {Published, RecordState} from "../../store/slices/recordSlice/types";
 import {fontSizes} from "../../shared/styles/fonstSizes";
 import {sharedColors} from "../../shared/styles/colors";
+import {CancelIcon} from "../../shared/components/CancelIcon";
+import ModalDeleteComponent from "../../shared/components/ModalDeleteComponent";
+import {useAppDispatch} from "../../store/hooks/useAppDispatch";
+import {clearAll, remove} from "../../store/slices/recordSlice";
 
 export const RecordItem = memo((props: RecordState) => {
 
@@ -11,34 +15,84 @@ export const RecordItem = memo((props: RecordState) => {
         description,
         published,
         photoUrl,
-        createdAt
+        createdAt,
+        id
     } = props
+
+    const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+
+    const dispatch = useAppDispatch()
+
+    const setDeleteModalVisibleHandler = () => {
+        setDeleteModalVisible(true)
+    }
+
+    const removeItem = (id?: number) => {
+        if (!id) return
+        dispatch(remove(id));
+        setDeleteModalVisible(false)
+    }
+
+    const cancelRemoveItem = () => {
+        setDeleteModalVisible(false)
+    }
+
+    const longPressHandler = () => {
+        console.log('41 longPressHandler !!!')
+    }
 
   return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.itemBlock}>
-            <View style={styles.itemTopPart}>
-                <Image source={{uri: photoUrl}} style={styles.recordImage}/>
 
-                <View style={styles.descriptionPart}>
-                    <Text style={styles.title}>{title}</Text>
+        <TouchableOpacity onLongPress={longPressHandler}>
+            <View style={styles.itemBlock}>
 
-                    <View style={styles.createdAtBlock}>
-                        <Text style={styles.createdAtKey}>Created at:</Text>
-                        <Text style={styles.createdAtValue}>{createdAt}</Text>
+                <View style={styles.removeItemContainer}>
+                    <TouchableOpacity onPress={setDeleteModalVisibleHandler} onLongPress={longPressHandler}>
+                        <CancelIcon
+                            width={'24'}
+                            height={'24'}
+                            fill={sharedColors.black}
+                        />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.itemTopPart}>
+                    <Image source={{uri: photoUrl}} style={styles.recordImage}/>
+
+                    <View style={styles.descriptionPart}>
+                        <Text style={styles.title}>{title}</Text>
+
+                        <View style={styles.createdAtBlock}>
+                            <Text style={styles.createdAtKey}>Created at:</Text>
+                            <Text style={styles.createdAtValue}>{createdAt}</Text>
+
+                            <View style={styles.publishedBlock}>
+                                <Text style={StyleSheet.flatten([styles.published, published === Published.Published ? styles.publishedOk : styles.draft])}>{published}</Text>
+                            </View>
+
+                        </View>
+
                     </View>
+                </View>
 
-                    <View style={styles.publishedBlock}>
-                        <Text style={styles.published}>{published}</Text>
-                    </View>
-
+                <View>
+                    <Text style={styles.description}>{description}</Text>
                 </View>
 
             </View>
-            <View>
-                <Text style={styles.description}>{description}</Text>
-            </View>
-        </View>
+        </TouchableOpacity>
+
+          {isDeleteModalVisible && (
+              <ModalDeleteComponent
+                  text={'Do you want to remove this record?'}
+                  confirmCallback={removeItem}
+                  cancelCallback={cancelRemoveItem}
+                  setModalVisible={setDeleteModalVisible}
+                  id={id}
+              />
+          )}
+
     </SafeAreaView>
   );
 });
@@ -48,30 +102,33 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "flex-start",
         height: '100%',
-        //marginTop: StatusBar.currentHeight || 0,
+        width: '100%'
     },
     itemBlock: {
+        marginBottom: 20,
+        padding: fontSizes['1rem'],
+        backgroundColor: sharedColors.white,
+        borderRadius: 4,
+        width: '100%',
+    },
+    removeItemContainer: {
+        alignItems: 'flex-end',
     },
     itemTopPart: {
         flexDirection: 'row'
     },
     descriptionPart: {
-        padding: fontSizes['1rem']
+        paddingHorizontal: fontSizes['1rem'],
+        justifyContent: "space-between"
     },
-    item: {
-        backgroundColor: '#f9c2ff',
-        padding: 20,
-        marginVertical: 8,
-        marginHorizontal: 16,
-    },
+
     title: {
-        fontSize: 32,
+        fontSize: 24,
         color: sharedColors.black
     },
     createdAtBlock: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 10
+      alignItems: 'flex-start',
+      gap: 4
     },
     createdAtKey: {
         fontSize: 10,
@@ -82,17 +139,27 @@ const styles = StyleSheet.create({
         color: sharedColors.black
     },
     publishedBlock: {
-
-    },
+        textAlign: 'center',
+    } as ViewStyle,
     published: {
-
+        padding: 8,
+        borderRadius: 4,
+    },
+    publishedOk: {
+        backgroundColor: sharedColors.lightGreen,
+        color: sharedColors.darkGreen
+    },
+    draft: {
+        backgroundColor: sharedColors.lightPink,
+        color: sharedColors.red
     },
     recordImage: {
-        width: 100,
-        height: 100,
+        width: 120,
+        height: 120,
         borderRadius: 4
     },
     description: {
-        color: sharedColors.black
+        color: sharedColors.black,
+        marginTop: 8
     }
 })

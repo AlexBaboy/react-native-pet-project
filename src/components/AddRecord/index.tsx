@@ -12,7 +12,7 @@ import {
 import {Published, RecordState} from "../../store/slices/recordSlice/types";
 import {sharedColors} from "../../shared/styles/colors";
 import {fontSizes} from "../../shared/styles/fonstSizes";
-import ModalComponent from "../../shared/components/ModalComponent";
+import ModalComponent from "../../shared/components/ModalPublishedComponent";
 import ImageCropComponent from "../ImageCropComponent";
 import {useForm, Controller} from "react-hook-form"
 import * as yup from 'yup';
@@ -94,11 +94,7 @@ export const AddRecord = () => {
             published,
             photoUrl
         }
-
-        console.log('91 recordToSave', recordToSave)
-
         dispatch(add(recordToSave as RecordState));
-
         navigate('Record List')
     }
 
@@ -189,13 +185,13 @@ export const AddRecord = () => {
                 />}
             </View>
 
-            <ScrollView>
+            <View>
                 <Button
                     title={'Add record'}
                     onPress={handleSubmit(onSubmit)}
                     disabled={isSubmitDisabled}
                 />
-            </ScrollView>
+            </View>
 
             </ScrollView>
         </SafeAreaView>

@@ -4,5 +4,10 @@ export const sharedColors = {
     white: '#FFFFFF',
     modalOverlayBackground: 'rgba(169, 169, 169, .5)',
     blue: '#4169E1',
-    red: '#DC143C'
+    lightGreen: '#90EE90',
+    green: '#32CD32',
+    darkGreen: '#006400',
+    lightRed: '#FA8072',
+    lightPink: '#FFB6C1',
+    red: '#DC143C',
 }
