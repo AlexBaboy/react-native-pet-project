@@ -109,11 +109,12 @@ const styles = StyleSheet.create({
     },
     recordsContainer: {
       height: '100%',
-      paddingBottom: 40,
+      paddingBottom: 80,
     },
     deleteBlock: {
         width: '100%',
         alignItems: 'flex-end',
+        marginBottom: 10
     },
     bottomButton: {
         position: 'absolute',
