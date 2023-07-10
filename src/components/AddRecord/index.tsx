@@ -1,27 +1,28 @@
 import React, {useState} from 'react';
 import {
-    ScrollView,
-    Text,
     Button,
+    Pressable,
     SafeAreaView,
+    ScrollView,
     StyleSheet,
+    Text,
     TextInput,
+    TextInputProps,
     View,
-    TextInputProps, Pressable,
 } from 'react-native';
 import {Published, RecordState} from "../../store/slices/recordSlice/types";
 import {sharedColors} from "../../shared/styles/colors";
 import {fontSizes} from "../../shared/styles/fonstSizes";
 import ModalComponent from "../../shared/components/ModalPublishedComponent";
 import ImageCropComponent from "../ImageCropComponent";
-import {useForm, Controller} from "react-hook-form"
+import {Controller, useForm} from "react-hook-form"
 import * as yup from 'yup';
 import {yupResolver} from "@hookform/resolvers/yup";
-import type {RecordFormData } from './types'
+import type {RecordFormData} from './types'
 import {useAppDispatch} from "../../store/hooks/useAppDispatch";
 import {add} from "../../store/slices/recordSlice";
 import {useNavigation} from "@react-navigation/native";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {RootStackType} from "../../navigation/RootStack";
 
 interface ExtendedInputProps extends TextInputProps {
     name: keyof RecordState;
@@ -39,7 +40,7 @@ const schema = yup.object().shape({
 
 export const AddRecord = () => {
 
-    const {navigate} = useNavigation<NativeStackNavigationProp<any>>();
+    const {navigate} = useNavigation<RootStackType>();
     const [photoUrl, setPhotoUrl] = useState<string>('');
     const [published, setPublished] = useState<string>(Published.Published);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -71,9 +72,9 @@ export const AddRecord = () => {
     const {
         control,
         handleSubmit,
-        formState: { errors },
+        formState: {errors},
         setValue,
-    } = useForm<RecordFormData > ({
+    } = useForm<RecordFormData>({
         defaultValues: {
             title: '',
             published: published,
@@ -83,7 +84,7 @@ export const AddRecord = () => {
         resolver: yupResolver(schema),
     })
 
-    const onSubmit = (data: RecordFormData ) => {
+    const onSubmit = (data: RecordFormData) => {
 
         setFormSubmitted(true)
 
@@ -102,7 +103,7 @@ export const AddRecord = () => {
             photoUrl
         }
         dispatch(add(recordToSave as RecordState));
-        navigate('Record List')
+        navigate('RecordList')
     }
 
     const isSubmitDisabled = Object.keys(errors).length > 0 || !photoUrl;
@@ -111,97 +112,96 @@ export const AddRecord = () => {
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
 
-            <View>
-
-                {/* title */}
-                <Controller
-                    control={control}
-                    render={({ field }) => (
-                        <ExtendedTextInput
-                            placeholder={'Title'}
-                            onChangeText={(value) => {
-                                field.onChange(value);
-                                setValue("title", value);
-                                closeModal()
-                            }}
-                            name="title"
-                            style={styles.inputForm}
-                        />
-                    )}
-                    name="title"
-                />
-                {errors.title?.message && <Text style={styles.error}>{errors.title?.message}</Text>}
-
-                {/* Published */}
-                <Controller
-                    control={control}
-                    render={({ field }) => (
-                        <Pressable
-                            onPress={showModal}
-                        >
+                <>
+                    {/* title */}
+                    <Controller
+                        control={control}
+                        render={({field}) => (
                             <ExtendedTextInput
-                                placeholder={'Published'}
-                                name="published"
-                                editable={false}
+                                placeholder={'Title'}
+                                onChangeText={(value) => {
+                                    field.onChange(value);
+                                    setValue("title", value);
+                                    closeModal()
+                                }}
+                                name="title"
                                 style={styles.inputForm}
-                                value={published}
                             />
-                        </Pressable>
-                    )}
-                    name="published"
-                />
+                        )}
+                        name="title"
+                    />
+                    {errors.title?.message && <Text style={styles.error}>{errors.title?.message}</Text>}
 
-                {/* Description */}
-                <Controller
-                    control={control}
-                    render={({ field }) => (
-                        <ExtendedTextInput
-                            placeholder={'Description'}
-                            numberOfLines={4}
-                            multiline={true}
-                            maxLength={80}
-                            onChangeText={(value) => {
-                                field.onChange(value);
-                                setValue("description", value);
-                                closeModal()
-                            }}
-                            name="description"
-                            style={styles.inputForm}
-                        />
-                    )}
-                    name="description"
-                />
-                {errors.description?.message && <Text  style={styles.error}>{errors.description?.message}</Text>}
-            </View>
+                    {/* Published */}
+                    <Controller
+                        control={control}
+                        render={({field}) => (
+                            <Pressable
+                                onPress={showModal}
+                            >
+                                <ExtendedTextInput
+                                    placeholder={'Published'}
+                                    name="published"
+                                    editable={false}
+                                    style={styles.inputForm}
+                                    value={published}
+                                />
+                            </Pressable>
+                        )}
+                        name="published"
+                    />
 
-            <View style={styles.photoBlock}>
-                <View>
-                    <Text style={styles.photoBlockTitle}>Photo</Text>
+                    {/* Description */}
+                    <Controller
+                        control={control}
+                        render={({field}) => (
+                            <ExtendedTextInput
+                                placeholder={'Description'}
+                                numberOfLines={4}
+                                multiline={true}
+                                maxLength={80}
+                                onChangeText={(value) => {
+                                    field.onChange(value);
+                                    setValue("description", value);
+                                    closeModal()
+                                }}
+                                name="description"
+                                style={styles.inputForm}
+                            />
+                        )}
+                        name="description"
+                    />
+                    {errors.description?.message && <Text style={styles.error}>{errors.description?.message}</Text>}
+                </>
+
+                <View style={styles.photoBlock}>
+                    <>
+                        <Text style={styles.photoBlockTitle}>Photo</Text>
+                    </>
+
+                    {/* Photo */}
+                    <ImageCropComponent
+                        photoUrl={photoUrl}
+                        pickPictureHandler={pickPictureHandler}
+                        removePictureHandler={removePictureHandler}
+                    />
+                    {formSubmitted && !photoUrl && <Text style={styles.error}>{'Photo is required'}</Text>}
+
+                    {modalVisible && <ModalComponent
+                        modalVisible={modalVisible}
+                        setModalVisible={setModalVisible}
+                        onChangePublished={onChangePublished}
+                        checkedValue={published}
+                    />}
                 </View>
 
-                {/* Photo */}
-                <ImageCropComponent
-                    photoUrl={photoUrl}
-                    pickPictureHandler={pickPictureHandler}
-                    removePictureHandler={removePictureHandler}
-                />
-                {formSubmitted && !photoUrl && <Text  style={styles.error}>{'Photo is required'}</Text>}
-
-                {modalVisible && <ModalComponent
-                    modalVisible={modalVisible}
-                    setModalVisible={setModalVisible}
-                    onChangePublished={onChangePublished}
-                    checkedValue={published}
-                />}
-            </View>
-
-            <View>
-                <Button
-                    title={'Add record'}
-                    onPress={handleSubmit(onSubmit)}
-                    disabled={isSubmitDisabled}
-                />
-            </View>
+                <>
+                    <Button
+                        title={'Add record'}
+                        onPress={handleSubmit(onSubmit)}
+                        disabled={isSubmitDisabled}
+                    />
+                </>
 
             </ScrollView>
         </SafeAreaView>
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     },
     inputForm: {
         minHeight: 60,
-        backgroundColor: sharedColors.bgGray ,
+        backgroundColor: sharedColors.bgGray,
         borderRadius: 4,
         paddingHorizontal: fontSizes['1rem'],
         paddingVertical: 4,

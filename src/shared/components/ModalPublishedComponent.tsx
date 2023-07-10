@@ -42,7 +42,7 @@ const ModalPublishedComponent = (props: ModalComponentProps) => {
                     setModalVisible(false);
                 }}>
 
-                <TouchableWithoutFeedback onPressIn={()=>setModalVisible(!modalVisible)}>
+                <TouchableWithoutFeedback onPressIn={() => setModalVisible(!modalVisible)}>
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
 
@@ -60,7 +60,7 @@ const ModalPublishedComponent = (props: ModalComponentProps) => {
                                         <View style={styles.optionContainer}>
                                             <Text style={styles.optionText}>{value}</Text>
                                             {checkedValue === value && (
-                                                <View  style={styles.optionCheckedSvg} >
+                                                <View  style={styles.optionCheckedSvg}>
                                                     <CheckedIcon
                                                         fill={sharedColors.modalOverlayBackground}
                                                         width={'24'}
@@ -75,7 +75,7 @@ const ModalPublishedComponent = (props: ModalComponentProps) => {
 
                             <View  style={styles.buttonBlock}>
                                 <Pressable
-                                    style={[styles.button, styles.buttonClose]}
+                                    style={StyleSheet.flatten([styles.button, styles.buttonClose])}
                                     onPress={() => setModalVisible(!modalVisible)}>
                                     <Text style={styles.buttonCloseText}>CLOSE</Text>
                                 </Pressable>

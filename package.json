@@ -7,7 +7,9 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "ts": "tsc -p .",
+    "tsw": "npm run ts -- --watch"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.1",

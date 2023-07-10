@@ -36,11 +36,11 @@ const ModalChooseTypePhotoComponent = (props: ModalComponentProps) => {
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
 
-                            <View>
+                            <>
                                 <Text>
                                     {text}
                                 </Text>
-                            </View>
+                            </>
 
                             <View style={styles.buttonBlock}>
                                 <Pressable
@@ -66,8 +66,6 @@ const ModalChooseTypePhotoComponent = (props: ModalComponentProps) => {
                     </View>
 
                 </TouchableWithoutFeedback>
-
-
             </Modal>
         </View>
     );

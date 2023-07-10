@@ -1,17 +1,17 @@
 import React, {useState} from 'react';
 import {
+    Button,
     FlatList,
-    SafeAreaView,
-    Text,
-    StyleSheet,
     ListRenderItemInfo,
-    View,
-    Button, TouchableOpacity
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import {RecordItem} from "../RecordItem";
 import {useSelector} from "react-redux";
 import {useNavigation} from "@react-navigation/native";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {RecordState} from "../../store/slices/recordSlice/types";
 import {fontSizes} from "../../shared/styles/fonstSizes";
 import {sharedColors} from "../../shared/styles/colors";
@@ -20,11 +20,12 @@ import ModalDeleteComponent from "../../shared/components/ModalDeleteComponent";
 import {useAppDispatch} from "../../store/hooks/useAppDispatch";
 import {clearAll} from "../../store/slices/recordSlice";
 import {getAllRecords} from "../../store/selectors/records";
+import {RootStackType} from "../../navigation/RootStack";
 
 export const RecordList = () => {
 
     const recordList = useSelector(getAllRecords)
-    const {navigate} = useNavigation<NativeStackNavigationProp<any>>();
+    const {navigate} = useNavigation<RootStackType>();
     const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
     const dispatch = useAppDispatch()
 
@@ -57,32 +58,32 @@ export const RecordList = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-              <View style={styles.recordsContainer}>
-                  {!recordList.length ? (
-                      <Text>Record list is Empty</Text>
-                  ):
-                      <View>
-                          <View style={styles.deleteBlock}>
-                              <TouchableOpacity onPress={showRemoveAllModal}>
+            <View style={styles.recordsContainer}>
+                {!recordList.length ? (
+                        <Text>Record list is Empty</Text>
+                    ) :
+                    <View>
+                        <View style={styles.deleteBlock}>
+                            <TouchableOpacity onPress={showRemoveAllModal}>
                                 <DeleteIcon
                                     width={'24'}
                                     height={'24'}
                                 />
-                              </TouchableOpacity>
-                          </View>
-                          <FlatList
-                              data={recordList}
-                              renderItem={renderItem}
-                              keyExtractor={(item) => item.id!.toString()}
-                          />
-                      </View>
-                  }
-              </View>
-              <View style={styles.bottomButton}>
-                  <Button title={'add record'}
-                    onPress={() => navigate('Create new post')}
-                  />
-              </View>
+                            </TouchableOpacity>
+                        </View>
+                        <FlatList
+                            data={recordList}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id!.toString()}
+                        />
+                    </View>
+                }
+            </View>
+            <View style={styles.bottomButton}>
+                <Button title={'add record'}
+                        onPress={() => navigate('AddRecord')}
+                />
+            </View>
 
             {isDeleteModalVisible && (
                 <ModalDeleteComponent
@@ -94,7 +95,7 @@ export const RecordList = () => {
             )}
 
         </SafeAreaView>
-  );
+    );
 };
 
 const styles = StyleSheet.create({
@@ -108,8 +109,8 @@ const styles = StyleSheet.create({
         position: "relative",
     },
     recordsContainer: {
-      height: '100%',
-      paddingBottom: 80,
+        height: '100%',
+        paddingBottom: 80,
     },
     deleteBlock: {
         width: '100%',

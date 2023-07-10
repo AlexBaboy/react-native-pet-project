@@ -44,7 +44,7 @@ const ModalPublishedComponent = (props: ModalComponentProps) => {
                                 </Text>
                             </View>
 
-                            <View  style={styles.buttonBlock}>
+                            <View style={styles.buttonBlock}>
                                 <Pressable
                                     style={styles.button}
                                     onPress={() => confirmCallback(id)}>

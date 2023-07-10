@@ -37,62 +37,65 @@ export const RecordItem = memo((props: RecordState) => {
         setDeleteModalVisible(false)
     }
 
-    const longPressHandler = () => {}
+    const longPressHandler = () => {
+    }
 
-  return (
-      <SafeAreaView style={styles.container}>
+    return (
+        <SafeAreaView style={styles.container}>
 
-        <TouchableOpacity onLongPress={longPressHandler}>
-            <View style={styles.itemBlock}>
+            <TouchableOpacity onLongPress={longPressHandler}>
+                <View style={styles.itemBlock}>
 
-                <View style={styles.removeItemContainer}>
-                    <TouchableOpacity onPress={setDeleteModalVisibleHandler} onLongPress={longPressHandler}>
-                        <CancelIcon
-                            width={'24'}
-                            height={'24'}
-                            fill={sharedColors.black}
-                        />
-                    </TouchableOpacity>
-                </View>
+                    <View style={styles.removeItemContainer}>
+                        <TouchableOpacity onPress={setDeleteModalVisibleHandler} onLongPress={longPressHandler}>
+                            <CancelIcon
+                                width={'24'}
+                                height={'24'}
+                                fill={sharedColors.black}
+                            />
+                        </TouchableOpacity>
+                    </View>
 
-                <View style={styles.itemTopPart}>
-                    <Image source={{uri: photoUrl}} style={styles.recordImage}/>
+                    <View style={styles.itemTopPart}>
+                        <Image source={{uri: photoUrl}} style={styles.recordImage}/>
 
-                    <View style={styles.descriptionPart}>
-                        <Text style={styles.title}>{title}</Text>
+                        <View style={styles.descriptionPart}>
+                            <Text style={styles.title}>{title}</Text>
 
-                        <View style={styles.createdAtBlock}>
-                            <Text style={styles.createdAtKey}>Created at:</Text>
-                            <Text style={styles.createdAtValue}>{createdAt}</Text>
+                            <View style={styles.createdAtBlock}>
+                                <Text style={styles.createdAtKey}>Created at:</Text>
+                                <Text style={styles.createdAtValue}>{createdAt}</Text>
 
-                            <View style={styles.publishedBlock}>
-                                <Text style={StyleSheet.flatten([styles.published, published === Published.Published ? styles.publishedOk : styles.draft])}>{published}</Text>
+                                <View style={styles.publishedBlock}>
+                                    <Text style={StyleSheet.flatten([styles.published, published === Published.Published ? styles.publishedOk : styles.draft])}>
+                                        {published}
+                                    </Text>
+                                </View>
+
                             </View>
 
                         </View>
-
                     </View>
+
+                    <>
+                        <Text style={styles.description}>{description}</Text>
+                    </>
+
                 </View>
+            </TouchableOpacity>
 
-                <View>
-                    <Text style={styles.description}>{description}</Text>
-                </View>
+            {isDeleteModalVisible && (
+                <ModalDeleteComponent
+                    text={'Do you want to remove this record?'}
+                    confirmCallback={removeItem}
+                    cancelCallback={cancelRemoveItem}
+                    setModalVisible={setDeleteModalVisible}
+                    id={id}
+                />
+            )}
 
-            </View>
-        </TouchableOpacity>
-
-          {isDeleteModalVisible && (
-              <ModalDeleteComponent
-                  text={'Do you want to remove this record?'}
-                  confirmCallback={removeItem}
-                  cancelCallback={cancelRemoveItem}
-                  setModalVisible={setDeleteModalVisible}
-                  id={id}
-              />
-          )}
-
-    </SafeAreaView>
-  );
+        </SafeAreaView>
+    );
 });
 
 const styles = StyleSheet.create({
@@ -125,8 +128,8 @@ const styles = StyleSheet.create({
         color: sharedColors.black
     },
     createdAtBlock: {
-      alignItems: 'flex-start',
-      gap: 4
+        alignItems: 'flex-start',
+        gap: 4
     },
     createdAtKey: {
         fontSize: 10,
