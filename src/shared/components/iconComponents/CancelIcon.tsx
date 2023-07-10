@@ -1,6 +1,6 @@
 import {Path, Svg} from "react-native-svg";
 import React from "react";
-import {sharedColors} from "../styles/colors";
+import {sharedColors} from "../../styles/colors";
 
 type IconTypeProps = {
     width?: string,

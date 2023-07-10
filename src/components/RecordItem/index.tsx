@@ -3,7 +3,7 @@ import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ViewStyle
 import {Published, RecordState} from "../../store/slices/recordSlice/types";
 import {fontSizes} from "../../shared/styles/fonstSizes";
 import {sharedColors} from "../../shared/styles/colors";
-import {CancelIcon} from "../../shared/components/CancelIcon";
+import {CancelIcon} from "../../shared/components/iconComponents/CancelIcon";
 import ModalDeleteComponent from "../../shared/components/ModalDeleteComponent";
 import {useAppDispatch} from "../../store/hooks/useAppDispatch";
 import {clearAll, remove} from "../../store/slices/recordSlice";

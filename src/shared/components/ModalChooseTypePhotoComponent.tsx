@@ -1,25 +1,24 @@
 import React, {memo} from 'react';
-import {Alert, Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View} from "react-native";
+import {Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View} from "react-native";
 import {sharedColors} from "../styles/colors";
 import {fontSizes} from "../styles/fonstSizes";
+import {PlusIcon} from "./iconComponents/PlusIcon";
+import {PhotoCameraIcon} from "./iconComponents/PhotoCameraIcon";
 
 type ModalComponentProps = {
-    setModalVisible: (visible: boolean) => void,
     text: string,
-    confirmCallback: (id?: number) => void,
+    pickPicture: () => void,
+    openCamera: () => void,
     cancelCallback: () => void,
-    id?: number
 }
 
-
-const ModalPublishedComponent = (props: ModalComponentProps) => {
+const ModalChooseTypePhotoComponent = (props: ModalComponentProps) => {
 
     const {
-        setModalVisible,
         text,
-        confirmCallback,
+        pickPicture,
+        openCamera,
         cancelCallback,
-        id,
     } = props
 
     return (
@@ -30,35 +29,45 @@ const ModalPublishedComponent = (props: ModalComponentProps) => {
                 transparent={true}
                 visible={true}
                 onRequestClose={() => {
-                    Alert.alert('Modal has been closed.');
-                    setModalVisible(false);
+                    cancelCallback();
                 }}>
 
                 <TouchableWithoutFeedback onPressIn={cancelCallback}>
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
 
-                            <View style={styles.optionsBlock}>
+                            <View>
                                 <Text>
                                     {text}
                                 </Text>
                             </View>
 
-                            <View  style={styles.buttonBlock}>
+                            <View style={styles.buttonBlock}>
                                 <Pressable
                                     style={styles.button}
-                                    onPress={() => confirmCallback(id)}>
-                                        <Text style={styles.buttonText}>YES</Text>
+                                    onPress={pickPicture}>
+                                    <PlusIcon
+                                        fill={sharedColors.white}
+                                    />
+                                    <Text style={styles.buttonText}>File</Text>
                                 </Pressable>
+
                                 <Pressable
                                     style={styles.button}
-                                    onPress={cancelCallback}>
-                                        <Text style={styles.buttonText}>NO</Text>
+                                    onPress={openCamera}>
+                                    <PhotoCameraIcon
+                                        fill={sharedColors.white}
+                                    />
+                                    <Text style={styles.buttonText}>Camera</Text>
                                 </Pressable>
                             </View>
+
                         </View>
                     </View>
+
                 </TouchableWithoutFeedback>
+
+
             </Modal>
         </View>
     );
@@ -73,14 +82,14 @@ const styles = StyleSheet.create({
         height: '100%',
         flex: 1,
         justifyContent: 'flex-end',
-        alignItems: 'center',
+        alignItems: 'flex-end',
     },
     modalView: {
         backgroundColor: sharedColors.white,
         borderTopLeftRadius: fontSizes['1rem'],
         borderTopRightRadius: fontSizes['1rem'],
         padding: fontSizes['1rem'],
-        alignItems: 'center',
+        alignItems: 'flex-start',
         justifyContent: 'space-between',
         shadowColor: '#000',
         shadowOffset: {
@@ -91,29 +100,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         width: '100%',
-        height: '20%',
-    },
-    optionsBlock: {
-        width: '100%'
-    },
-
-    optionContainer: {
-        margin: 0,
-        padding: 0,
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-    option: {
-        marginTop: 8,
-        width: '100%',
-        borderBottomWidth: 1,
-        borderBottomColor: sharedColors.bgGray
-    },
-    optionText: {
-
-    },
-    optionCheckedSvg: {
-
+        height: '30%'
     },
     buttonBlock: {
         width: '100%',
@@ -121,6 +108,7 @@ const styles = StyleSheet.create({
         gap: 10
     },
     button: {
+        alignItems: 'center',
         borderRadius: 4,
         padding: 10,
         width: '50%',
@@ -133,4 +121,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default memo(ModalPublishedComponent);
+export default memo(ModalChooseTypePhotoComponent);

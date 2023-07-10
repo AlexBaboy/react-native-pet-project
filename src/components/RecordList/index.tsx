@@ -12,22 +12,20 @@ import {RecordItem} from "../RecordItem";
 import {useSelector} from "react-redux";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {initialStateType, RecordState} from "../../store/slices/recordSlice/types";
+import {RecordState} from "../../store/slices/recordSlice/types";
 import {fontSizes} from "../../shared/styles/fonstSizes";
 import {sharedColors} from "../../shared/styles/colors";
-import {DeleteIcon} from "../../shared/components/DeleteIcon";
+import {DeleteIcon} from "../../shared/components/iconComponents/DeleteIcon";
 import ModalDeleteComponent from "../../shared/components/ModalDeleteComponent";
 import {useAppDispatch} from "../../store/hooks/useAppDispatch";
-import {add, clearAll} from "../../store/slices/recordSlice";
-
+import {clearAll} from "../../store/slices/recordSlice";
+import {getAllRecords} from "../../store/selectors/records";
 
 export const RecordList = () => {
 
-    const recordList = useSelector((state: initialStateType) => state.records)
+    const recordList = useSelector(getAllRecords)
     const {navigate} = useNavigation<NativeStackNavigationProp<any>>();
-
     const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
-
     const dispatch = useAppDispatch()
 
     const renderItem = ({item}: ListRenderItemInfo<RecordState>): React.JSX.Element => {
@@ -60,7 +58,7 @@ export const RecordList = () => {
     return (
         <SafeAreaView style={styles.container}>
               <View>
-                  {!recordList?.records.length ? (
+                  {!recordList.length ? (
                       <Text>Record list is Empty</Text>
                   ):
                       <View>
@@ -73,9 +71,9 @@ export const RecordList = () => {
                               </TouchableOpacity>
                           </View>
                           <FlatList
-                              data={recordList?.records}
+                              data={recordList}
                               renderItem={renderItem}
-                              keyExtractor={(item) => item.id.toString()}
+                              keyExtractor={(item) => item.id!.toString()}
                           />
                       </View>
                   }
@@ -121,5 +119,4 @@ const styles = StyleSheet.create({
         width: '100%',
         zIndex: 5
     }
-
 })

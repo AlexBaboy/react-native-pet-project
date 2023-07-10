@@ -1,16 +1,14 @@
 import {createSlice} from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
-import {initialStateType, RecordState} from "./types";
+import {RecordState} from "./types";
 
-const initialState: initialStateType = {
-  records: [],
-};
+const initialState: RecordState[] = [];
 
 export const recordSlice = createSlice({
   name: 'record',
   initialState,
   reducers: {
-    add: (state, {payload}: PayloadAction<RecordState>) => {
+    add: (records, {payload}: PayloadAction<RecordState>) => {
 
       const recordItem: RecordState = {
         id: Date.now(),
@@ -20,13 +18,13 @@ export const recordSlice = createSlice({
         createdAt: new Date().toLocaleString(),
         photoUrl: payload.photoUrl
       }
-      state.records.push(recordItem);
+      records.push(recordItem);
     },
-    remove: (state, {payload}: PayloadAction<number>) => {
-      state.records = state.records.filter(record => record.id !== payload);
+    remove: (records, {payload}: PayloadAction<number>) => {
+      return records.filter(record => record.id !== payload);
     },
-    clearAll: state => {
-      state.records = []
+    clearAll: () => {
+      return []
     }
   },
 });

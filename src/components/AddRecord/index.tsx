@@ -48,6 +48,14 @@ export const AddRecord = () => {
 
     const dispatch = useAppDispatch()
 
+    const showModal = () => {
+        setModalVisible(true)
+    }
+
+    const closeModal = () => {
+        setModalVisible(false)
+    }
+
     const onChangePublished = (value: string) => {
         setPublished(value)
     }
@@ -115,6 +123,7 @@ export const AddRecord = () => {
                             onChangeText={(value) => {
                                 field.onChange(value);
                                 setValue("title", value);
+                                closeModal()
                             }}
                             name="title"
                             style={styles.inputForm}
@@ -129,7 +138,7 @@ export const AddRecord = () => {
                     control={control}
                     render={({ field }) => (
                         <Pressable
-                            onPress={() => setModalVisible(true)}
+                            onPress={showModal}
                         >
                             <ExtendedTextInput
                                 placeholder={'Published'}
@@ -150,10 +159,12 @@ export const AddRecord = () => {
                         <ExtendedTextInput
                             placeholder={'Description'}
                             numberOfLines={4}
+                            multiline={true}
                             maxLength={80}
                             onChangeText={(value) => {
                                 field.onChange(value);
                                 setValue("description", value);
+                                closeModal()
                             }}
                             name="description"
                             style={styles.inputForm}

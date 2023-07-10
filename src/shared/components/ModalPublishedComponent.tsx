@@ -1,9 +1,17 @@
 import React, {memo} from 'react';
-import {Alert, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {
+    Modal,
+    Pressable,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
+} from "react-native";
 import {Published} from "../../store/slices/recordSlice/types";
 import {sharedColors} from "../styles/colors";
 import {fontSizes} from "../styles/fonstSizes";
-import {CheckedIcon} from "./CheckedlIcon";
+import {CheckedIcon} from "./iconComponents/CheckedlIcon";
 
 type ModalComponentProps = {
     modalVisible: boolean
@@ -31,48 +39,50 @@ const ModalPublishedComponent = (props: ModalComponentProps) => {
                 transparent={true}
                 visible={true}
                 onRequestClose={() => {
-                    Alert.alert('Modal has been closed.');
                     setModalVisible(false);
                 }}>
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
 
-                        <View style={styles.optionsBlock}>
-                            {publishedValues.map((value, index) => (
-                                <TouchableOpacity
-                                    key={index}
-                                    style={styles.option}
-                                    onPress={() => {
-                                        // Обработка выбора значения
-                                        onChangePublished(value)
-                                        setModalVisible(!modalVisible);
-                                    }}
-                                >
-                                    <View style={styles.optionContainer}>
-                                        <Text style={styles.optionText}>{value}</Text>
-                                        {checkedValue === value && (
-                                            <View  style={styles.optionCheckedSvg} >
-                                                <CheckedIcon
-                                                    fill={sharedColors.modalOverlayBackground}
-                                                    width={'24'}
-                                                    height={'24'}
-                                                />
-                                            </View>
-                                        )}
-                                    </View>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
+                <TouchableWithoutFeedback onPressIn={()=>setModalVisible(!modalVisible)}>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
 
-                        <View  style={styles.buttonBlock}>
-                            <Pressable
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => setModalVisible(!modalVisible)}>
-                                <Text style={styles.buttonCloseText}>CLOSE</Text>
-                            </Pressable>
+                            <View style={styles.optionsBlock}>
+                                {publishedValues.map((value, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={styles.option}
+                                        onPress={() => {
+                                            // Обработка выбора значения
+                                            onChangePublished(value)
+                                            setModalVisible(!modalVisible);
+                                        }}
+                                    >
+                                        <View style={styles.optionContainer}>
+                                            <Text style={styles.optionText}>{value}</Text>
+                                            {checkedValue === value && (
+                                                <View  style={styles.optionCheckedSvg} >
+                                                    <CheckedIcon
+                                                        fill={sharedColors.modalOverlayBackground}
+                                                        width={'24'}
+                                                        height={'24'}
+                                                    />
+                                                </View>
+                                            )}
+                                        </View>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+
+                            <View  style={styles.buttonBlock}>
+                                <Pressable
+                                    style={[styles.button, styles.buttonClose]}
+                                    onPress={() => setModalVisible(!modalVisible)}>
+                                    <Text style={styles.buttonCloseText}>CLOSE</Text>
+                                </Pressable>
+                            </View>
                         </View>
                     </View>
-                </View>
+                </TouchableWithoutFeedback>
             </Modal>
         </View>
     );
@@ -80,6 +90,11 @@ const ModalPublishedComponent = (props: ModalComponentProps) => {
 
 const styles = StyleSheet.create({
     centeredView: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
         flex: 1,
         justifyContent: 'flex-end',
         alignItems: 'center',
@@ -100,7 +115,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         width: '100%',
-        height: '50%',
+        height: '30%',
     },
     optionsBlock: {
         width: '100%'

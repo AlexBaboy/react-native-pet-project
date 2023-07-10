@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Alert, Image, StyleSheet, TouchableOpacity, View} from "react-native";
-import {CancelIcon} from "../../shared/components/CancelIcon";
+import {CancelIcon} from "../../shared/components/iconComponents/CancelIcon";
 import {sharedColors} from "../../shared/styles/colors";
-import {PlusIcon} from "../../shared/components/PlusIcon";
+import {PlusIcon} from "../../shared/components/iconComponents/PlusIcon";
 import {fontSizes} from "../../shared/styles/fonstSizes";
 import ImagePicker from "react-native-image-crop-picker";
+import ModalChooseTypePhotoComponent from "../../shared/components/ModalChooseTypePhotoComponent";
 
 type ImageCropComponentProps = {
     pickPictureHandler: (url: string) => void
@@ -20,6 +21,16 @@ const ImageCropComponent = (props: ImageCropComponentProps) => {
         photoUrl
     } = props
 
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+    const cancelChooseTypePhoto = () => {
+        setModalVisible(false)
+    }
+
+    const showModalChooseTypePhoto = () => {
+        setModalVisible(true)
+    }
+
     const pickPicture = () => {
 
         ImagePicker.openPicker({
@@ -33,18 +44,39 @@ const ImageCropComponent = (props: ImageCropComponentProps) => {
             if (error.code === 'E_PICKER_CANCELLED') {
                 // Обработка случая, когда выбор изображения был отменен пользователем
                 console.log('Выбор изображения отменен');
-                Alert.alert('Выбор изображения отмене');
+                Alert.alert('Выбор изображения отменен');
             } else {
                 // Обработка других ошибок
                 console.log('Ошибка при выборе изображения:', error);
                 Alert.alert(`Ошибка при выборе изображения:, ${error}`);
             }
-        });
+        }).finally(cancelChooseTypePhoto)
+    };
+
+    const openCamera = () => {
+        ImagePicker.openCamera({
+            width: 300,
+            height: 400,
+            cropping: true,
+        })
+        .then(image => {
+            pickPictureHandler(image.path);
+        }).catch(error => {
+            if (error.code === 'E_PICKER_CANCELLED') {
+                // Обработка случая, когда выбор изображения был отменен пользователем
+                console.log('Выбор изображения отменен');
+                Alert.alert('Выбор изображения отменен');
+            } else {
+                // Обработка других ошибок
+                console.log('Ошибка при выборе изображения:', error);
+                Alert.alert(`Ошибка при выборе изображения:, ${error}`);
+            }
+        }).finally(cancelChooseTypePhoto)
     };
 
     return (
         <View style={styles.plusBlockContainer}>
-            <TouchableOpacity style={styles.plusBlock} onPress={pickPicture}>
+            <TouchableOpacity style={styles.plusBlock} onPress={showModalChooseTypePhoto}>
 
                 {photoUrl ? (
                     <View style={styles.imagesContainer}>
@@ -61,8 +93,20 @@ const ImageCropComponent = (props: ImageCropComponentProps) => {
                         />
                     </View>
                     ) :
-                    <PlusIcon />
+                    <View style={styles.plusIconContainer}>
+                        <PlusIcon />
+                    </View>
                 }
+
+                {modalVisible && (
+                    <ModalChooseTypePhotoComponent
+                        text={'Choose type photo'}
+                        pickPicture={pickPicture}
+                        openCamera={openCamera}
+                        cancelCallback={cancelChooseTypePhoto}
+                    />
+                )}
+
             </TouchableOpacity>
         </View>
     );
@@ -81,10 +125,15 @@ const styles = StyleSheet.create({
         backgroundColor: sharedColors.bgGray,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 4
+        borderRadius: 4,
+        position: 'relative'
     },
     imagesContainer: {
 
+    },
+    plusIconContainer: {
+      alignItems: "center",
+      justifyContent: 'center',
     },
     removePictureBlock: {
         position: 'absolute',
@@ -99,7 +148,9 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 4
-    }
+    },
+    imagesTypeContainer: {
+    },
 })
 
 export default React.memo(ImageCropComponent);

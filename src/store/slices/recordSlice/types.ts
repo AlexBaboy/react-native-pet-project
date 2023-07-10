@@ -13,5 +13,5 @@ export type RecordState = {
 };
 
 export type initialStateType = {
-    records: RecordState[]
+    records: []
 }
