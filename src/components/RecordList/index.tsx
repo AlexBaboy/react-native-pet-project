@@ -57,7 +57,7 @@ export const RecordList = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-              <View>
+              <View style={styles.recordsContainer}>
                   {!recordList.length ? (
                       <Text>Record list is Empty</Text>
                   ):
@@ -107,10 +107,13 @@ const styles = StyleSheet.create({
         backgroundColor: sharedColors.bgGray,
         position: "relative",
     },
+    recordsContainer: {
+      height: '100%',
+      paddingBottom: 40,
+    },
     deleteBlock: {
         width: '100%',
         alignItems: 'flex-end',
-        marginBottom: 20
     },
     bottomButton: {
         position: 'absolute',

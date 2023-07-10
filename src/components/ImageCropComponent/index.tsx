@@ -43,11 +43,9 @@ const ImageCropComponent = (props: ImageCropComponentProps) => {
         }).catch(error => {
             if (error.code === 'E_PICKER_CANCELLED') {
                 // Обработка случая, когда выбор изображения был отменен пользователем
-                console.log('Выбор изображения отменен');
                 Alert.alert('Выбор изображения отменен');
             } else {
                 // Обработка других ошибок
-                console.log('Ошибка при выборе изображения:', error);
                 Alert.alert(`Ошибка при выборе изображения:, ${error}`);
             }
         }).finally(cancelChooseTypePhoto)
@@ -64,11 +62,9 @@ const ImageCropComponent = (props: ImageCropComponentProps) => {
         }).catch(error => {
             if (error.code === 'E_PICKER_CANCELLED') {
                 // Обработка случая, когда выбор изображения был отменен пользователем
-                console.log('Выбор изображения отменен');
                 Alert.alert('Выбор изображения отменен');
             } else {
                 // Обработка других ошибок
-                console.log('Ошибка при выборе изображения:', error);
                 Alert.alert(`Ошибка при выборе изображения:, ${error}`);
             }
         }).finally(cancelChooseTypePhoto)

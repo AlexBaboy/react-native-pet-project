@@ -61,7 +61,6 @@ export const AddRecord = () => {
     }
 
     const pickPictureHandler = (url: string) => {
-        console.log('49 url', url)
         setPhotoUrl(url)
     }
 

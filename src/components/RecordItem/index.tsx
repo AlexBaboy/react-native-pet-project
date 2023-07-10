@@ -6,7 +6,7 @@ import {sharedColors} from "../../shared/styles/colors";
 import {CancelIcon} from "../../shared/components/iconComponents/CancelIcon";
 import ModalDeleteComponent from "../../shared/components/ModalDeleteComponent";
 import {useAppDispatch} from "../../store/hooks/useAppDispatch";
-import {clearAll, remove} from "../../store/slices/recordSlice";
+import {remove} from "../../store/slices/recordSlice";
 
 export const RecordItem = memo((props: RecordState) => {
 
@@ -37,9 +37,7 @@ export const RecordItem = memo((props: RecordState) => {
         setDeleteModalVisible(false)
     }
 
-    const longPressHandler = () => {
-        console.log('41 longPressHandler !!!')
-    }
+    const longPressHandler = () => {}
 
   return (
       <SafeAreaView style={styles.container}>
