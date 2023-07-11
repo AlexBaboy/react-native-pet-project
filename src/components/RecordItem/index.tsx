@@ -1,12 +1,13 @@
 import React, {memo, useState} from 'react';
 import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ViewStyle} from 'react-native';
 import {Published, RecordState} from "../../store/slices/recordSlice/types";
-import {fontSizes} from "../../shared/styles/fonstSizes";
+import {fontSizes} from "../../shared/styles/fontSizes";
 import {sharedColors} from "../../shared/styles/colors";
 import {CancelIcon} from "../../shared/components/iconComponents/CancelIcon";
 import ModalDeleteComponent from "../../shared/components/ModalDeleteComponent";
 import {useAppDispatch} from "../../store/hooks/useAppDispatch";
-import {remove} from "../../store/slices/recordSlice";
+import {removeRecord} from "../../store/slices/recordSlice";
+import {messages} from "../../constants/messages";
 
 export const RecordItem = memo((props: RecordState) => {
 
@@ -29,7 +30,7 @@ export const RecordItem = memo((props: RecordState) => {
 
     const removeItem = (id?: number) => {
         if (!id) return
-        dispatch(remove(id));
+        dispatch(removeRecord(id));
         setDeleteModalVisible(false)
     }
 
@@ -48,11 +49,13 @@ export const RecordItem = memo((props: RecordState) => {
 
                     <View style={styles.removeItemContainer}>
                         <TouchableOpacity onPress={setDeleteModalVisibleHandler} onLongPress={longPressHandler}>
-                            <CancelIcon
-                                width={'24'}
-                                height={'24'}
-                                fill={sharedColors.black}
-                            />
+                            <View style={styles.cancelIconWrapper}>
+                                <CancelIcon
+                                    width={'24'}
+                                    height={'24'}
+                                    fill={sharedColors.white}
+                                />
+                            </View>
                         </TouchableOpacity>
                     </View>
 
@@ -63,7 +66,9 @@ export const RecordItem = memo((props: RecordState) => {
                             <Text style={styles.title}>{title}</Text>
 
                             <View style={styles.createdAtBlock}>
-                                <Text style={styles.createdAtKey}>Created at:</Text>
+                                <Text style={styles.createdAtKey}>
+                                    {messages.records.text.createdAt}
+                                </Text>
                                 <Text style={styles.createdAtValue}>{createdAt}</Text>
 
                                 <View style={styles.publishedBlock}>
@@ -86,7 +91,7 @@ export const RecordItem = memo((props: RecordState) => {
 
             {isDeleteModalVisible && (
                 <ModalDeleteComponent
-                    text={'Do you want to remove this record?'}
+                    text={messages.records.questions.removeRecordRequest}
                     confirmCallback={removeItem}
                     cancelCallback={cancelRemoveItem}
                     setModalVisible={setDeleteModalVisible}
@@ -114,6 +119,10 @@ const styles = StyleSheet.create({
     },
     removeItemContainer: {
         alignItems: 'flex-end',
+    },
+    cancelIconWrapper: {
+        backgroundColor: sharedColors.blue,
+        borderRadius: 50
     },
     itemTopPart: {
         flexDirection: 'row'

@@ -1,12 +1,12 @@
 import React, {memo} from 'react';
 import {Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View} from "react-native";
 import {sharedColors} from "../styles/colors";
-import {fontSizes} from "../styles/fonstSizes";
+import {fontSizes} from "../styles/fontSizes";
 import {PlusIcon} from "./iconComponents/PlusIcon";
 import {PhotoCameraIcon} from "./iconComponents/PhotoCameraIcon";
+import {messages} from "../../constants/messages";
 
 type ModalComponentProps = {
-    text: string,
     pickPicture: () => void,
     openCamera: () => void,
     cancelCallback: () => void,
@@ -15,7 +15,6 @@ type ModalComponentProps = {
 const ModalChooseTypePhotoComponent = (props: ModalComponentProps) => {
 
     const {
-        text,
         pickPicture,
         openCamera,
         cancelCallback,
@@ -36,12 +35,6 @@ const ModalChooseTypePhotoComponent = (props: ModalComponentProps) => {
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
 
-                            <>
-                                <Text>
-                                    {text}
-                                </Text>
-                            </>
-
                             <View style={styles.buttonBlock}>
                                 <Pressable
                                     style={styles.button}
@@ -49,7 +42,9 @@ const ModalChooseTypePhotoComponent = (props: ModalComponentProps) => {
                                     <PlusIcon
                                         fill={sharedColors.white}
                                     />
-                                    <Text style={styles.buttonText}>File</Text>
+                                    <Text style={styles.buttonText}>
+                                        {messages.records.text.file}
+                                    </Text>
                                 </Pressable>
 
                                 <Pressable
@@ -58,7 +53,9 @@ const ModalChooseTypePhotoComponent = (props: ModalComponentProps) => {
                                     <PhotoCameraIcon
                                         fill={sharedColors.white}
                                     />
-                                    <Text style={styles.buttonText}>Camera</Text>
+                                    <Text style={styles.buttonText}>
+                                        {messages.records.text.camera}
+                                    </Text>
                                 </Pressable>
                             </View>
 
@@ -98,7 +95,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         width: '100%',
-        height: '30%'
+        height: '20%'
     },
     buttonBlock: {
         width: '100%',

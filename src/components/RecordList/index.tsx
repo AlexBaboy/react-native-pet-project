@@ -13,14 +13,15 @@ import {RecordItem} from "../RecordItem";
 import {useSelector} from "react-redux";
 import {useNavigation} from "@react-navigation/native";
 import {RecordState} from "../../store/slices/recordSlice/types";
-import {fontSizes} from "../../shared/styles/fonstSizes";
+import {fontSizes} from "../../shared/styles/fontSizes";
 import {sharedColors} from "../../shared/styles/colors";
 import {DeleteIcon} from "../../shared/components/iconComponents/DeleteIcon";
 import ModalDeleteComponent from "../../shared/components/ModalDeleteComponent";
 import {useAppDispatch} from "../../store/hooks/useAppDispatch";
-import {clearAll} from "../../store/slices/recordSlice";
+import {clearAllRecords} from "../../store/slices/recordSlice";
 import {getAllRecords} from "../../store/selectors/records";
 import {RootStackType} from "../../navigation/RootStack";
+import {messages} from "../../constants/messages";
 
 export const RecordList = () => {
 
@@ -48,7 +49,7 @@ export const RecordList = () => {
     }
 
     const removeAll = () => {
-        dispatch(clearAll());
+        dispatch(clearAllRecords());
         setDeleteModalVisible(false)
     }
 
@@ -60,7 +61,9 @@ export const RecordList = () => {
         <SafeAreaView style={styles.container}>
             <View style={styles.recordsContainer}>
                 {!recordList.length ? (
-                        <Text>Record list is Empty</Text>
+                        <Text>
+                            {messages.records.text.emptyList}
+                        </Text>
                     ) :
                     <View>
                         <View style={styles.deleteBlock}>
@@ -80,14 +83,15 @@ export const RecordList = () => {
                 }
             </View>
             <View style={styles.bottomButton}>
-                <Button title={'add record'}
-                        onPress={() => navigate('AddRecord')}
+                <Button
+                    title={messages.records.titles.addRecord}
+                    onPress={() => navigate('Add Record')}
                 />
             </View>
 
             {isDeleteModalVisible && (
                 <ModalDeleteComponent
-                    text={'Do you want to remove all records?'}
+                    text={messages.records.questions.removeAllRecordsRequest}
                     confirmCallback={removeAll}
                     cancelCallback={cancelRemoveAll}
                     setModalVisible={setDeleteModalVisible}

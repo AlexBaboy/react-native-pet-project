@@ -1,7 +1,8 @@
 import React, {memo} from 'react';
-import {Alert, Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View} from "react-native";
+import {Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View} from "react-native";
 import {sharedColors} from "../styles/colors";
-import {fontSizes} from "../styles/fonstSizes";
+import {fontSizes} from "../styles/fontSizes";
+import {messages} from "../../constants/messages";
 
 type ModalComponentProps = {
     setModalVisible: (visible: boolean) => void,
@@ -10,7 +11,6 @@ type ModalComponentProps = {
     cancelCallback: () => void,
     id?: number
 }
-
 
 const ModalPublishedComponent = (props: ModalComponentProps) => {
 
@@ -30,7 +30,6 @@ const ModalPublishedComponent = (props: ModalComponentProps) => {
                 transparent={true}
                 visible={true}
                 onRequestClose={() => {
-                    Alert.alert('Modal has been closed.');
                     setModalVisible(false);
                 }}>
 
@@ -48,12 +47,16 @@ const ModalPublishedComponent = (props: ModalComponentProps) => {
                                 <Pressable
                                     style={styles.button}
                                     onPress={() => confirmCallback(id)}>
-                                        <Text style={styles.buttonText}>YES</Text>
+                                        <Text style={styles.buttonText}>
+                                            {messages.records.titles.yes}
+                                        </Text>
                                 </Pressable>
                                 <Pressable
                                     style={styles.button}
                                     onPress={cancelCallback}>
-                                        <Text style={styles.buttonText}>NO</Text>
+                                        <Text style={styles.buttonText}>
+                                            {messages.records.titles.no}
+                                        </Text>
                                 </Pressable>
                             </View>
                         </View>

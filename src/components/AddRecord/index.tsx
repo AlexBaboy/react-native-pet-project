@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import {Published, RecordState} from "../../store/slices/recordSlice/types";
 import {sharedColors} from "../../shared/styles/colors";
-import {fontSizes} from "../../shared/styles/fonstSizes";
+import {fontSizes} from "../../shared/styles/fontSizes";
 import ModalComponent from "../../shared/components/ModalPublishedComponent";
 import ImageCropComponent from "../ImageCropComponent";
 import {Controller, useForm} from "react-hook-form"
@@ -20,9 +20,10 @@ import * as yup from 'yup';
 import {yupResolver} from "@hookform/resolvers/yup";
 import type {RecordFormData} from './types'
 import {useAppDispatch} from "../../store/hooks/useAppDispatch";
-import {add} from "../../store/slices/recordSlice";
+import {addRecord} from "../../store/slices/recordSlice";
 import {useNavigation} from "@react-navigation/native";
 import {RootStackType} from "../../navigation/RootStack";
+import {useCheckPermissions} from "../../hooks/permissions/useCheckPermissions";
 
 interface ExtendedInputProps extends TextInputProps {
     name: keyof RecordState;
@@ -48,6 +49,9 @@ export const AddRecord = () => {
     const [formSubmitted, setFormSubmitted] = useState(false)
 
     const dispatch = useAppDispatch()
+
+    useCheckPermissions()
+
 
     const showModal = () => {
         setModalVisible(true)
@@ -102,8 +106,8 @@ export const AddRecord = () => {
             published,
             photoUrl
         }
-        dispatch(add(recordToSave as RecordState));
-        navigate('RecordList')
+        dispatch(addRecord(recordToSave as RecordState));
+        navigate('Record List')
     }
 
     const isSubmitDisabled = Object.keys(errors).length > 0 || !photoUrl;

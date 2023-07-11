@@ -8,7 +8,7 @@ export const recordSlice = createSlice({
   name: 'record',
   initialState,
   reducers: {
-    add: (records, {payload}: PayloadAction<RecordState>) => {
+    addRecord: (records, {payload}: PayloadAction<RecordState>) => {
 
       const recordItem: RecordState = {
         id: Date.now(),
@@ -18,21 +18,24 @@ export const recordSlice = createSlice({
         createdAt: new Date().toLocaleString(),
         photoUrl: payload.photoUrl
       }
-      records.push(recordItem);
+      return [
+          ...records,
+          recordItem
+      ]
     },
-    remove: (records, {payload}: PayloadAction<number>) => {
+    removeRecord: (records, {payload}: PayloadAction<number>) => {
       return records.filter(record => record.id !== payload);
     },
-    clearAll: () => {
+    clearAllRecords: () => {
       return []
     }
   },
 });
 
 export const {
-  add,
-  remove,
-  clearAll
+  addRecord,
+  removeRecord,
+  clearAllRecords
 } = recordSlice.actions;
 
 export const recordReducer = recordSlice.reducer;

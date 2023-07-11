@@ -2,10 +2,14 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator, NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {FC} from "react";
 import {Routes} from "./routes";
+import {Pages} from "./routes/pages";
+
+type PagesScreens = typeof Pages.screens;
+type PagesScreenKeys = keyof PagesScreens;
+type PagesScreenValues = PagesScreens[PagesScreenKeys];
 
 export type RootStackParamList = {
-    RecordList: undefined;
-    AddRecord: undefined;
+    [Key in PagesScreenValues]: undefined;
 }
 
 const Stack = createNativeStackNavigator();

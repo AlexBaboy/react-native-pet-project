@@ -10,8 +10,9 @@ import {
 } from "react-native";
 import {Published} from "../../store/slices/recordSlice/types";
 import {sharedColors} from "../styles/colors";
-import {fontSizes} from "../styles/fonstSizes";
+import {fontSizes} from "../styles/fontSizes";
 import {CheckedIcon} from "./iconComponents/CheckedlIcon";
+import {messages} from "../../constants/messages";
 
 type ModalComponentProps = {
     modalVisible: boolean
@@ -77,7 +78,9 @@ const ModalPublishedComponent = (props: ModalComponentProps) => {
                                 <Pressable
                                     style={StyleSheet.flatten([styles.button, styles.buttonClose])}
                                     onPress={() => setModalVisible(!modalVisible)}>
-                                    <Text style={styles.buttonCloseText}>CLOSE</Text>
+                                    <Text style={styles.buttonCloseText}>
+                                        {messages.records.titles.close}
+                                    </Text>
                                 </Pressable>
                             </View>
                         </View>

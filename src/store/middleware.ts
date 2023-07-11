@@ -1,16 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {persistReducer, persistStore} from 'redux-persist';
 import {rootReducer} from './reducers/root';
-import {configureStore} from "@reduxjs/toolkit";
 import {createLogger} from "redux-logger";
-
+import {configureStore} from "@reduxjs/toolkit";
 
 const options = {
   diff: true,
   collapsed: true,
 };
 
-const logger = createLogger(options);
+export const logger = createLogger(options);
 
 const persistConfig = {
   key: "root",
@@ -19,7 +18,7 @@ const persistConfig = {
   timeout: __DEV__ ? 3000 : 1000,
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+export const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -27,4 +26,5 @@ export const store = configureStore({
     serializableCheck: false
   }).concat(logger)
 });
-export const persistor = persistStore(store);
+
+export const middleware = persistStore(store);
