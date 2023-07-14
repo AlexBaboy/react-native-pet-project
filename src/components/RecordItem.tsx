@@ -1,13 +1,13 @@
 import React, {memo, useState} from 'react';
 import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ViewStyle} from 'react-native';
-import {Published, RecordState} from "../../store/slices/recordSlice/types";
-import {fontSizes} from "../../shared/styles/fontSizes";
-import {sharedColors} from "../../shared/styles/colors";
-import {CancelIcon} from "../../shared/components/iconComponents/CancelIcon";
-import ModalDeleteComponent from "../../shared/components/ModalDeleteComponent";
-import {useAppDispatch} from "../../store/hooks/useAppDispatch";
-import {removeRecord} from "../../store/slices/recordSlice";
-import {messages} from "../../constants/messages";
+import {Published, RecordState} from "../store/slices/recordSlice/types";
+import {fontSizes} from "../shared/styles/fontSizes";
+import {sharedColors} from "../shared/styles/colors";
+import {CancelIcon} from "../shared/components/iconComponents/CancelIcon";
+import {ModalDeleteComponent} from "./ModalDeleteComponent";
+import {useAppDispatch} from "../store/hooks/useAppDispatch";
+import {removeRecord} from "../store/slices/recordSlice";
+import {messages} from "../constants/messages";
 
 export const RecordItem = memo((props: RecordState) => {
 
@@ -49,13 +49,11 @@ export const RecordItem = memo((props: RecordState) => {
 
                     <View style={styles.removeItemContainer}>
                         <TouchableOpacity onPress={setDeleteModalVisibleHandler} onLongPress={longPressHandler}>
-                            <View style={styles.cancelIconWrapper}>
-                                <CancelIcon
-                                    width={'24'}
-                                    height={'24'}
-                                    fill={sharedColors.white}
-                                />
-                            </View>
+                            <CancelIcon
+                                width={'24'}
+                                height={'24'}
+                                fill={sharedColors.black}
+                            />
                         </TouchableOpacity>
                     </View>
 
@@ -76,7 +74,6 @@ export const RecordItem = memo((props: RecordState) => {
                                         {published}
                                     </Text>
                                 </View>
-
                             </View>
 
                         </View>
@@ -120,10 +117,6 @@ const styles = StyleSheet.create({
     removeItemContainer: {
         alignItems: 'flex-end',
     },
-    cancelIconWrapper: {
-        backgroundColor: sharedColors.blue,
-        borderRadius: 50
-    },
     itemTopPart: {
         flexDirection: 'row'
     },
@@ -131,7 +124,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: fontSizes['1rem'],
         justifyContent: "space-between"
     },
-
     title: {
         fontSize: 24,
         color: sharedColors.black

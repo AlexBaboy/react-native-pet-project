@@ -6,16 +6,19 @@ export const messages = {
             camera: "Camera",
             createdAt: "Created at",
             deselectedImage: "Image selection deselected",
+            photo: "Photo",
         },
         titles: {
             addRecord: "ADD RECORD",
             close: "CLOSE",
             yes: "YES",
-            no: "NO"
+            no: "NO",
+            submit: "SUBMIT"
         },
         error: {
             requiredField: "This field is required.",
             selectImageError: "Image selection error",
+            requiredPhoto: "Photo is required",
         },
         questions: {
             removeAllRecordsRequest: "Do you want to remove all records?",

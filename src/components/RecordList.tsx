@@ -9,26 +9,26 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import {RecordItem} from "../RecordItem";
+import {RecordItem} from "./RecordItem";
 import {useSelector} from "react-redux";
 import {useNavigation} from "@react-navigation/native";
-import {RecordState} from "../../store/slices/recordSlice/types";
-import {fontSizes} from "../../shared/styles/fontSizes";
-import {sharedColors} from "../../shared/styles/colors";
-import {DeleteIcon} from "../../shared/components/iconComponents/DeleteIcon";
-import ModalDeleteComponent from "../../shared/components/ModalDeleteComponent";
-import {useAppDispatch} from "../../store/hooks/useAppDispatch";
-import {clearAllRecords} from "../../store/slices/recordSlice";
-import {getAllRecords} from "../../store/selectors/records";
-import {RootStackType} from "../../navigation/RootStack";
-import {messages} from "../../constants/messages";
+import {RecordState} from "../store/slices/recordSlice/types";
+import {fontSizes} from "../shared/styles/fontSizes";
+import {sharedColors} from "../shared/styles/colors";
+import {DeleteIcon} from "../shared/components/iconComponents/DeleteIcon";
+import {ModalDeleteComponent} from "./ModalDeleteComponent";
+import {useAppDispatch} from "../store/hooks/useAppDispatch";
+import {clearAllRecords} from "../store/slices/recordSlice";
+import {getAllRecords} from "../store/selectors/records";
+import {RootStackType} from "../navigation/RootStack";
+import {messages} from "../constants/messages";
 
 export const RecordList = () => {
 
+    const dispatch = useAppDispatch()
     const recordList = useSelector(getAllRecords)
     const {navigate} = useNavigation<RootStackType>();
     const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
-    const dispatch = useAppDispatch()
 
     const renderItem = ({item}: ListRenderItemInfo<RecordState>): React.JSX.Element => {
 
@@ -65,7 +65,7 @@ export const RecordList = () => {
                             {messages.records.text.emptyList}
                         </Text>
                     ) :
-                    <View>
+                    <>
                         <View style={styles.deleteBlock}>
                             <TouchableOpacity onPress={showRemoveAllModal}>
                                 <DeleteIcon
@@ -79,7 +79,7 @@ export const RecordList = () => {
                             renderItem={renderItem}
                             keyExtractor={(item) => item.id!.toString()}
                         />
-                    </View>
+                    </>
                 }
             </View>
             <View style={styles.bottomButton}>

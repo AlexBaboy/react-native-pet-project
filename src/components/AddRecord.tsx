@@ -10,48 +10,46 @@ import {
     TextInputProps,
     View,
 } from 'react-native';
-import {Published, RecordState} from "../../store/slices/recordSlice/types";
-import {sharedColors} from "../../shared/styles/colors";
-import {fontSizes} from "../../shared/styles/fontSizes";
-import ModalComponent from "../../shared/components/ModalPublishedComponent";
-import ImageCropComponent from "../ImageCropComponent";
+import {Published, RecordState} from "../store/slices/recordSlice/types";
+import {sharedColors} from "../shared/styles/colors";
+import {fontSizes} from "../shared/styles/fontSizes";
+import {ModalPublishedComponent} from "./ModalPublishedComponent";
+import {ImageCropComponent} from "./ImageCropComponent";
 import {Controller, useForm} from "react-hook-form"
 import * as yup from 'yup';
 import {yupResolver} from "@hookform/resolvers/yup";
-import type {RecordFormData} from './types'
-import {useAppDispatch} from "../../store/hooks/useAppDispatch";
-import {addRecord} from "../../store/slices/recordSlice";
+import {useAppDispatch} from "../store/hooks/useAppDispatch";
+import {addRecord} from "../store/slices/recordSlice";
 import {useNavigation} from "@react-navigation/native";
-import {RootStackType} from "../../navigation/RootStack";
-import {useCheckPermissions} from "../../hooks/permissions/useCheckPermissions";
+import {RootStackType} from "../navigation/RootStack";
+import {useCheckPermissions} from "../hooks/permissions/useCheckPermissions";
+import {messages} from "../constants/messages";
+import {RecordItem} from "../types/RecordItem";
 
 interface ExtendedInputProps extends TextInputProps {
     name: keyof RecordState;
 }
 
 const ExtendedTextInput: React.FC<ExtendedInputProps> = (props) => {
+    // для того, чтобы добавить поле name - надо для yup
     return <TextInput {...props} />;
 };
 
 const schema = yup.object().shape({
     title: yup.string().required('Title is required'),
     description: yup.string().required('Description is required'),
-    //photoUrl: yup.string().required('Photo is required'),
 });
 
 export const AddRecord = () => {
 
     const {navigate} = useNavigation<RootStackType>();
+    const dispatch = useAppDispatch()
+
     const [photoUrl, setPhotoUrl] = useState<string>('');
     const [published, setPublished] = useState<string>(Published.Published);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
 
-    const [formSubmitted, setFormSubmitted] = useState(false)
-
-    const dispatch = useAppDispatch()
-
     useCheckPermissions()
-
 
     const showModal = () => {
         setModalVisible(true)
@@ -78,7 +76,7 @@ export const AddRecord = () => {
         handleSubmit,
         formState: {errors},
         setValue,
-    } = useForm<RecordFormData>({
+    } = useForm<RecordItem>({
         defaultValues: {
             title: '',
             published: published,
@@ -88,15 +86,13 @@ export const AddRecord = () => {
         resolver: yupResolver(schema),
     })
 
-    const onSubmit = (data: RecordFormData) => {
-
-        setFormSubmitted(true)
+    const onSubmit = (data: RecordItem) => {
 
         // все непустые поля из формы
         const nonEmptyFields: Record<string, string> = {};
         for (const key in data) {
-            if (data[key as keyof RecordFormData]) {
-                nonEmptyFields[key] = data[key as keyof RecordFormData] as string;
+            if (data[key as keyof RecordItem]) {
+                nonEmptyFields[key] = data[key as keyof RecordItem] as string;
             }
         }
 
@@ -110,7 +106,7 @@ export const AddRecord = () => {
         navigate('Record List')
     }
 
-    const isSubmitDisabled = Object.keys(errors).length > 0 || !photoUrl;
+    const isErrors = Object.keys(errors).length > 0;
 
     return (
         <SafeAreaView style={styles.container}>
@@ -139,7 +135,7 @@ export const AddRecord = () => {
                     {/* Published */}
                     <Controller
                         control={control}
-                        render={({field}) => (
+                        render={() => (
                             <Pressable
                                 onPress={showModal}
                             >
@@ -189,9 +185,10 @@ export const AddRecord = () => {
                         pickPictureHandler={pickPictureHandler}
                         removePictureHandler={removePictureHandler}
                     />
-                    {formSubmitted && !photoUrl && <Text style={styles.error}>{'Photo is required'}</Text>}
+                    {/* часть ошибок проверяется через yup */}
+                    {isErrors && !photoUrl && <Text style={styles.error}>{messages.records.error.requiredPhoto}</Text>}
 
-                    {modalVisible && <ModalComponent
+                    {modalVisible && <ModalPublishedComponent
                         modalVisible={modalVisible}
                         setModalVisible={setModalVisible}
                         onChangePublished={onChangePublished}
@@ -201,9 +198,8 @@ export const AddRecord = () => {
 
                 <>
                     <Button
-                        title={'Add record'}
+                        title={messages.records.titles.submit}
                         onPress={handleSubmit(onSubmit)}
-                        disabled={isSubmitDisabled}
                     />
                 </>
 
@@ -245,7 +241,7 @@ const styles = StyleSheet.create({
     photoBlock: {
         marginTop: fontSizes['1rem'],
         borderTopWidth: fontSizes['1rem'],
-        borderTopColor: sharedColors.bgGray
+        borderTopColor: sharedColors.bgGray,
     },
     photoBlockTitle: {
         marginTop: fontSizes['1rem'],

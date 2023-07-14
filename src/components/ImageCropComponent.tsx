@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
+import React, {memo, useState} from 'react';
 import {Alert, Image, StyleSheet, TouchableOpacity, View} from "react-native";
-import {CancelIcon} from "../../shared/components/iconComponents/CancelIcon";
-import {sharedColors} from "../../shared/styles/colors";
-import {PlusIcon} from "../../shared/components/iconComponents/PlusIcon";
-import {fontSizes} from "../../shared/styles/fontSizes";
+import {CancelIcon} from "../shared/components/iconComponents/CancelIcon";
+import {sharedColors} from "../shared/styles/colors";
+import {PlusIcon} from "../shared/components/iconComponents/PlusIcon";
+import {fontSizes} from "../shared/styles/fontSizes";
 import ImagePicker from "react-native-image-crop-picker";
-import ModalChooseTypePhotoComponent from "../../shared/components/ModalChooseTypePhotoComponent";
-import {messages} from "../../constants/messages";
+import {ModalChooseTypePhotoComponent} from "./ModalChooseTypePhotoComponent";
+import {messages} from "../constants/messages";
 
 type ImageCropComponentProps = {
     pickPictureHandler: (url: string) => void
@@ -14,7 +14,7 @@ type ImageCropComponentProps = {
     photoUrl: string
 }
 
-const ImageCropComponent = (props: ImageCropComponentProps) => {
+export const ImageCropComponent = memo((props: ImageCropComponentProps) => {
 
     const {
         pickPictureHandler,
@@ -32,43 +32,28 @@ const ImageCropComponent = (props: ImageCropComponentProps) => {
         setModalVisible(true)
     }
 
-    const pickPicture = () => {
+    const pickPicture = (sourceType: string) => {
+        let pickerFunction = ImagePicker.openPicker;
 
-        ImagePicker.openPicker({
+        pickerFunction = sourceType === 'file' ? ImagePicker.openPicker : ImagePicker.openCamera
+
+        pickerFunction({
             width: 300,
             height: 400,
             cropping: true,
             mediaType: 'photo',
-        }).then(image => {
-            pickPictureHandler(image.path);
-        }).catch(error => {
-            if (error.code === 'E_PICKER_CANCELLED') {
-                // Обработка случая, когда выбор изображения был отменен пользователем
-                Alert.alert(messages.records.text.deselectedImage);
-            } else {
-                // Обработка других ошибок
-                Alert.alert(`${messages.records.error.selectImageError}:, ${error}`);
-            }
-        }).finally(cancelChooseTypePhoto)
-    };
-
-    const openCamera = () => {
-        ImagePicker.openCamera({
-            width: 300,
-            height: 400,
-            cropping: true,
         })
-        .then(image => {
-            pickPictureHandler(image.path);
-        }).catch(error => {
-            if (error.code === 'E_PICKER_CANCELLED') {
-                // Обработка случая, когда выбор изображения был отменен пользователем
-                Alert.alert(messages.records.text.deselectedImage);
-            } else {
-                // Обработка других ошибок
-                Alert.alert(`${messages.records.error.selectImageError}:, ${error}`);
-            }
-        }).finally(cancelChooseTypePhoto)
+            .then((image) => {
+                pickPictureHandler(image.path);
+            })
+            .catch((error) => {
+                if (error.code === 'E_PICKER_CANCELLED') {
+                    Alert.alert(messages.records.text.deselectedImage);
+                } else {
+                    Alert.alert(`${messages.records.error.selectImageError}: ${error}`);
+                }
+            })
+            .finally(cancelChooseTypePhoto);
     };
 
     return (
@@ -99,8 +84,8 @@ const ImageCropComponent = (props: ImageCropComponentProps) => {
 
                 {modalVisible && (
                     <ModalChooseTypePhotoComponent
-                        pickPicture={pickPicture}
-                        openCamera={openCamera}
+                        pickPicture={() => pickPicture('file')}
+                        openCamera={() => pickPicture('camera')}
                         cancelCallback={cancelChooseTypePhoto}
                     />
                 )}
@@ -108,7 +93,7 @@ const ImageCropComponent = (props: ImageCropComponentProps) => {
             </TouchableOpacity>
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     plusBlockContainer: {
@@ -135,8 +120,8 @@ const styles = StyleSheet.create({
     },
     removePictureBlock: {
         position: 'absolute',
-        right: 20,
-        top: 0,
+        right: 10,
+        top: -5,
         width: 5,
         height: 5,
         zIndex: 5,
@@ -156,5 +141,3 @@ const styles = StyleSheet.create({
     imagesTypeContainer: {
     },
 })
-
-export default React.memo(ImageCropComponent);

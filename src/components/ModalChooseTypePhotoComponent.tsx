@@ -1,10 +1,10 @@
 import React, {memo} from 'react';
-import {Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View} from "react-native";
-import {sharedColors} from "../styles/colors";
-import {fontSizes} from "../styles/fontSizes";
-import {PlusIcon} from "./iconComponents/PlusIcon";
-import {PhotoCameraIcon} from "./iconComponents/PhotoCameraIcon";
-import {messages} from "../../constants/messages";
+import {Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View, ViewStyle} from "react-native";
+import {sharedColors} from "../shared/styles/colors";
+import {centeredView, modalView, buttonBlock, button, buttonText} from "../shared/styles/styles";
+import {PlusIcon} from "../shared/components/iconComponents/PlusIcon";
+import {PhotoCameraIcon} from "../shared/components/iconComponents/PhotoCameraIcon";
+import {messages} from "../constants/messages";
 
 type ModalComponentProps = {
     pickPicture: () => void,
@@ -12,7 +12,7 @@ type ModalComponentProps = {
     cancelCallback: () => void,
 }
 
-const ModalChooseTypePhotoComponent = (props: ModalComponentProps) => {
+export const ModalChooseTypePhotoComponent = memo((props: ModalComponentProps) => {
 
     const {
         pickPicture,
@@ -66,54 +66,22 @@ const ModalChooseTypePhotoComponent = (props: ModalComponentProps) => {
             </Modal>
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     centeredView: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
-    },
+        ...centeredView
+    } as ViewStyle,
     modalView: {
-        backgroundColor: sharedColors.white,
-        borderTopLeftRadius: fontSizes['1rem'],
-        borderTopRightRadius: fontSizes['1rem'],
-        padding: fontSizes['1rem'],
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-        width: '100%',
-        height: '20%'
-    },
+        ...modalView
+    } as ViewStyle,
     buttonBlock: {
-        width: '100%',
-        flexDirection: 'row',
-        gap: 10
-    },
+       ...buttonBlock
+    } as ViewStyle,
     button: {
-        alignItems: 'center',
-        borderRadius: 4,
-        padding: 10,
-        width: '50%',
-        backgroundColor: sharedColors.blue
-    },
+        ...button
+    } as ViewStyle,
     buttonText: {
-        color: sharedColors.white,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    }
+        ...buttonText
+    } as ViewStyle
 })
-
-export default memo(ModalChooseTypePhotoComponent);

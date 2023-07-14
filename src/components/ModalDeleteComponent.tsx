@@ -1,8 +1,8 @@
 import React, {memo} from 'react';
-import {Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View} from "react-native";
-import {sharedColors} from "../styles/colors";
-import {fontSizes} from "../styles/fontSizes";
-import {messages} from "../../constants/messages";
+import {Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View, ViewStyle} from "react-native";
+import {sharedColors} from "../shared/styles/colors";
+import {messages} from "../constants/messages";
+import {button, buttonBlock, buttonText, centeredView, modalView} from "../shared/styles/styles";
 
 type ModalComponentProps = {
     setModalVisible: (visible: boolean) => void,
@@ -12,7 +12,7 @@ type ModalComponentProps = {
     id?: number
 }
 
-const ModalPublishedComponent = (props: ModalComponentProps) => {
+export const ModalDeleteComponent = memo((props: ModalComponentProps) => {
 
     const {
         setModalVisible,
@@ -65,41 +65,18 @@ const ModalPublishedComponent = (props: ModalComponentProps) => {
             </Modal>
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     centeredView: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-    },
+        ...centeredView
+    } as ViewStyle,
     modalView: {
-        backgroundColor: sharedColors.white,
-        borderTopLeftRadius: fontSizes['1rem'],
-        borderTopRightRadius: fontSizes['1rem'],
-        padding: fontSizes['1rem'],
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-        width: '100%',
-        height: '20%',
-    },
+        ...modalView
+    } as ViewStyle,
     optionsBlock: {
         width: '100%'
     },
-
     optionContainer: {
         margin: 0,
         padding: 0,
@@ -112,28 +89,13 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: sharedColors.bgGray
     },
-    optionText: {
-
-    },
-    optionCheckedSvg: {
-
-    },
     buttonBlock: {
-        width: '100%',
-        flexDirection: 'row',
-        gap: 10
-    },
+        ...buttonBlock
+    } as ViewStyle,
     button: {
-        borderRadius: 4,
-        padding: 10,
-        width: '50%',
-        backgroundColor: sharedColors.blue
-    },
+       ...button
+    } as ViewStyle,
     buttonText: {
-        color: sharedColors.white,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    }
+        ...buttonText
+    } as ViewStyle
 })
-
-export default memo(ModalPublishedComponent);
